@@ -16,5 +16,14 @@ spring:
     jpa:
         hibernate:
             ddl-auto: update
-        show-sql: true
+        show-sql: false
         database-platform: org.hibernate.dialect.PostgreSQLDialect
+logging:
+    level:
+        org:
+            hibernate:
+                SQL: OFF
+                type:
+                    descriptor:
+                        sql:
+                            BasicBinder: OFF
