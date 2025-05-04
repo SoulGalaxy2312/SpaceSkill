@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
+import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.User.request.UserRegisterDTO;
 import skillspace.skillspace_backend.User.service.UserWriteService;
 import skillspace.skillspace_backend.shared.constants.ApiPath;
@@ -24,7 +25,10 @@ public class UserWriteController {
 
     @PostMapping("/register")
     public skillspace.skillspace_backend.User.model.User register(@RequestBody UserRegisterDTO userRegisterDTO) {
-        return userWriteService.register(userRegisterDTO);
+        log.info("Attempting to register user with email: {}", userRegisterDTO.email());
+        User newUser = userWriteService.register(userRegisterDTO);
+        log.info("Successfully registered user with email: {}", userRegisterDTO.email());
+        return newUser;
     }
     
 }
