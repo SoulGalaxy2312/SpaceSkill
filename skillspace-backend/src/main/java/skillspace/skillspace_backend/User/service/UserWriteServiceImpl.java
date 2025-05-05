@@ -4,10 +4,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import skillspace.skillspace_backend.User.exception.UsernameExistsException;
 import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.User.repository.UserRepository;
 import skillspace.skillspace_backend.User.request.UserRegisterDTO;
-import skillspace.skillspace_backend.shared.exception.UsernameExistsException;
 
 @Service
 @Slf4j
@@ -32,8 +32,7 @@ public class UserWriteServiceImpl implements UserWriteService {
         }
 
         User newUser = new User();
-        newUser.setFirstName(userRegisterDTO.firstName());
-        newUser.setLastName(userRegisterDTO.lastName());
+        newUser.setProfileName(userRegisterDTO.profileName());
         newUser.setLocation(userRegisterDTO.location());
         newUser.setPassword(passwordEncoder.encode(userRegisterDTO.password()));
         newUser.setEmail(userRegisterDTO.email());
