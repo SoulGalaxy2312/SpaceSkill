@@ -27,28 +27,28 @@ public class User extends BaseUser {
     private String about;
 
     @ElementCollection
+    @CollectionTable(
+        name = "user_skills",
+        joinColumns = @JoinColumn(name = "user_id")
+    )
     private List<String> skills;
 
     @ElementCollection
     @CollectionTable(
-        name = "user_experience", 
+        name = "user_experiences", 
         joinColumns = @JoinColumn(name = "user_id")
     )
-    private List<String> experience = new ArrayList<>();
+    private List<Experience> experiences = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(
-        name = "user_education",
+        name = "user_educations",
         joinColumns = @JoinColumn(name = "user_id")
     )
-    private List<String> educations = new ArrayList<>();
+    private List<Education> educations = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {
         setRole(UserRole.USER);
     }
-
-    private String firstName;
-
-    private String lastName;
 }
