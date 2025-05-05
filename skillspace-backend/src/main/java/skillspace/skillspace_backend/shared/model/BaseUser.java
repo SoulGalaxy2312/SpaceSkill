@@ -30,6 +30,9 @@ public abstract class BaseUser {
     @Column(nullable = false, unique = true)
     private String password;
 
+    @Column(nullable = false)
+    private String profileName;
+    
     private String location;
 
     @Enumerated(EnumType.STRING)
