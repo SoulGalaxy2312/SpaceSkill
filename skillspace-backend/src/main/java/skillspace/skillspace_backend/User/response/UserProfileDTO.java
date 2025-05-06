@@ -1,16 +1,17 @@
 package skillspace.skillspace_backend.User.response;
 
 import java.util.List;
+import java.util.UUID;
 
 import skillspace.skillspace_backend.User.model.Education;
-import skillspace.skillspace_backend.User.model.Experience;
 
 public record UserProfileDTO(
+    UUID id,
     String profileName,
     String location,
     String about,
     List<String> skills,
-    List<Experience> experiences,
+    List<ExperienceDTO> experiences,
     List<Education> educations
 ) {
 }
