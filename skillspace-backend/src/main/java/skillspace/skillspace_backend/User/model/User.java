@@ -3,10 +3,13 @@ package skillspace.skillspace_backend.User.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -33,10 +36,10 @@ public class User extends BaseUser {
     )
     private List<String> skills;
 
-    @ElementCollection
-    @CollectionTable(
-        name = "user_experiences", 
-        joinColumns = @JoinColumn(name = "user_id")
+    @OneToMany(
+        mappedBy = "user",
+        cascade = CascadeType.ALL,
+        fetch = FetchType.LAZY
     )
     private List<Experience> experiences = new ArrayList<>();
 
