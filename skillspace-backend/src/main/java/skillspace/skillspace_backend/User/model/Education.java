@@ -1,6 +1,6 @@
 package skillspace.skillspace_backend.User.model;
 
-import java.time.LocalDate;
+import java.time.YearMonth;
 
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
@@ -11,8 +11,8 @@ import skillspace.skillspace_backend.shared.enums.EducationDegree;
 @Data
 @Embeddable
 public class Education {
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private YearMonth startDate;
+    private YearMonth endDate;
     private String university;
 
     @Enumerated(EnumType.STRING)
