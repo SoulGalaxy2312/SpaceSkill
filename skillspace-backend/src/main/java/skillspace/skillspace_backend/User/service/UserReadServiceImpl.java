@@ -1,6 +1,5 @@
 package skillspace.skillspace_backend.User.service;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -22,12 +21,12 @@ public class UserReadServiceImpl implements UserReadService {
     }
 
     public UserProfileDTO getUserProfile(UUID userId) throws UserNotFoundException {
-        Optional<User> user = userRepository.findById(userId);
-        if (!user.isPresent()) {
-            log.warn("Get user profile failed: User with ID {} was not found.", userId);
-            throw new UserNotFoundException(userId);
-        }
+        User user = userRepository.findById(userId)
+                        .orElseThrow(() -> {
+                            log.warn("Get user profile failed: User with ID {} was not found.", userId);
+                            return new UserNotFoundException(userId);
+                        });
 
-        return UserMapper.toUserProfileDTO(user.get());
+        return UserMapper.toUserProfileDTO(user);
     }
 }
