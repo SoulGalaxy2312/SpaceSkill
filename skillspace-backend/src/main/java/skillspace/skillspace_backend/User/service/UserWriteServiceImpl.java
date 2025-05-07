@@ -1,5 +1,6 @@
 package skillspace.skillspace_backend.User.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -65,6 +66,22 @@ public class UserWriteServiceImpl implements UserWriteService {
         entity.setUser(user);
 
         user.getExperiences().add(entity);
+        return UserMapper.toUserProfileDTO(userRepository.save(user));
+    }
+
+    @Transactional
+    public UserProfileDTO deleteExperience(UUID userId, UUID experienceId) throws UserNotFoundException {
+        User user = userRepository.findById(userId)
+                        .orElseThrow(() -> {
+                            log.warn("Delete experience fail: user with id {} was not found", userId);
+                            return new UserNotFoundException(userId);
+                        });
+
+        List<Experience> experiences = user.getExperiences();
+        experiences.removeIf((experience) -> {
+            return experience.getId().equals(experienceId);
+        });
+        
         return UserMapper.toUserProfileDTO(userRepository.save(user));
     }
 }

@@ -12,6 +12,7 @@ import skillspace.skillspace_backend.shared.constants.ApiPath;
 
 import java.util.UUID;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,6 +40,14 @@ public class UserWriteController {
         log.info("Attempting to add experience to user with id: {}", userId);
         UserProfileDTO userProfileDTO = userWriteService.addExperience(userId, experience);
         log.info("Successfully add experience to user with id: {}", userId);
+        return userProfileDTO;
+    }
+
+    @DeleteMapping(ApiPath.USER + "/{userId}/experience/{experienceId}") 
+    public UserProfileDTO deleteExperience(@PathVariable UUID userId, @PathVariable UUID experienceId) {
+        log.info("Attempting to delete experienceId {} of userId {}", experienceId, userId);
+        UserProfileDTO userProfileDTO = userWriteService.deleteExperience(userId, experienceId);
+        log.info("Successfully delete experienceId {} of userId {}", experienceId, userId);
         return userProfileDTO;
     }
 }

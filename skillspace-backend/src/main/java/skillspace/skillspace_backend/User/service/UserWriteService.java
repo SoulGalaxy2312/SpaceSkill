@@ -12,4 +12,5 @@ import skillspace.skillspace_backend.User.response.UserProfileDTO;
 public interface UserWriteService {
     User register(UserRegisterDTO dto) throws UsernameExistsException;
     UserProfileDTO addExperience(UUID userId, AddExperienceDTO experience) throws UserNotFoundException;
+    UserProfileDTO deleteExperience(UUID userId, UUID experienceId) throws UserNotFoundException;
 }

@@ -39,7 +39,8 @@ public class User extends BaseUser {
     @OneToMany(
         mappedBy = "user",
         cascade = CascadeType.ALL,
-        fetch = FetchType.LAZY
+        fetch = FetchType.LAZY,
+        orphanRemoval = true
     )
     private List<Experience> experiences = new ArrayList<>();
 
