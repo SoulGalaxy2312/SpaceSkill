@@ -3,6 +3,9 @@ package skillspace.skillspace_backend.shared.cache;
 import java.time.Duration;
 import java.util.List;
 
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.KeyScanOptions;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -49,9 +52,26 @@ public abstract class CustomHashMapping<T> {
     }
 
     protected void deleteCacheByPattern(String pattern) {
-        redisTemplate.keys(pattern).forEach(_key -> {
-            log.info("Delete cache for key {}", _key);
-            redisTemplate.delete(_key);
+        // redisTemplate.keys(pattern).forEach(_key -> {
+        //     log.info("Delete cache for key {}", _key);
+        //     redisTemplate.delete(_key);
+        // });
+
+        redisTemplate.execute((RedisCallback<Void>) connection -> {
+            try (Cursor<byte[]> cursor = connection.scan(KeyScanOptions.scanOptions()
+                                                            .match(pattern)
+                                                            .count(10)
+                                                            .build())) {
+                
+                while (cursor.hasNext()) {  
+                    String key = new String(cursor.next());
+                    log.info("Deleting key {}", key);
+                    redisTemplate.delete(key);
+                }
+
+            } // cursor.close() is automatically called here
+
+            return null;
         });
     }
 }
