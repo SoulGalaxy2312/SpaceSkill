@@ -3,10 +3,8 @@ package skillspace.skillspace_backend.User.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
-import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.User.request.AddEducationDTO;
 import skillspace.skillspace_backend.User.request.AddExperienceDTO;
-import skillspace.skillspace_backend.User.request.UserRegisterDTO;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
 import skillspace.skillspace_backend.User.service.UserWriteService;
 import skillspace.skillspace_backend.shared.constants.ApiPath;
@@ -28,14 +26,6 @@ public class UserWriteController {
         this.userWriteService = userWriteService;
     }
 
-    @PostMapping(ApiPath.AUTH + "/register")
-    public User register(@RequestBody UserRegisterDTO userRegisterDTO) {
-        log.info("Register user with email: {}", userRegisterDTO.email());
-        User newUser = userWriteService.register(userRegisterDTO);
-        log.info("Successfully registered user with email: {}", userRegisterDTO.email());
-        return newUser;
-    }
-    
     /**
      * Experience section
      */
