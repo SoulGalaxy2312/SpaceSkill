@@ -17,6 +17,8 @@ public class UserMapper {
             user.getExperiences().stream()
                                 .map(ExperienceMapper::toExperienceDTO)
                                 .collect(Collectors.toList()), 
-            user.getEducations());
+            user.getEducations().stream()
+                                .map(EducationMapper::toEducationDTO)
+                                .collect(Collectors.toList()));
     }
 }

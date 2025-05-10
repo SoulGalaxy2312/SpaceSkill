@@ -44,10 +44,11 @@ public class User extends BaseUser {
     )
     private List<Experience> experiences = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(
-        name = "user_educations",
-        joinColumns = @JoinColumn(name = "user_id")
+    @OneToMany(
+        mappedBy = "user",
+        cascade = CascadeType.ALL,
+        fetch = FetchType.LAZY,
+        orphanRemoval = true
     )
     private List<Education> educations = new ArrayList<>();
 
