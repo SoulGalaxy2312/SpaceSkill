@@ -1,6 +1,7 @@
 package skillspace.skillspace_backend.User.service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -8,8 +9,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import skillspace.skillspace_backend.User.exception.UserNotFoundException;
-import skillspace.skillspace_backend.User.exception.UsernameExistsException;
+import skillspace.skillspace_backend.User.exception.DuplicateSkillException;
 import skillspace.skillspace_backend.User.mapper.UserMapper;
 import skillspace.skillspace_backend.User.model.Education;
 import skillspace.skillspace_backend.User.model.Experience;
@@ -18,7 +18,6 @@ import skillspace.skillspace_backend.User.repository.UserRepository;
 import skillspace.skillspace_backend.User.request.AddEducationDTO;
 import skillspace.skillspace_backend.User.request.AddExperienceDTO;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
-import skillspace.skillspace_backend.auth.request.UserRegisterDTO;
 
 @Service
 @Slf4j
@@ -40,7 +39,7 @@ public class UserWriteServiceImpl implements UserWriteService {
      * Experience section
      */
     @Transactional
-    public UserProfileDTO addExperience(UUID userId, AddExperienceDTO dto) throws UserNotFoundException {
+    public UserProfileDTO addExperience(UUID userId, AddExperienceDTO dto) {
         User user = userHelper.getUserById(userId);
         
         Experience entity = new Experience();
@@ -55,7 +54,7 @@ public class UserWriteServiceImpl implements UserWriteService {
     }
 
     @Transactional
-    public UserProfileDTO deleteExperience(UUID userId, UUID experienceId) throws UserNotFoundException {
+    public UserProfileDTO deleteExperience(UUID userId, UUID experienceId) {
         User user = userHelper.getUserById(userId);
         List<Experience> experiences = user.getExperiences();
         experiences.removeIf((experience) -> {
@@ -69,7 +68,7 @@ public class UserWriteServiceImpl implements UserWriteService {
      * Education section
      */
     @Transactional
-    public UserProfileDTO addEducation(UUID userId, AddEducationDTO educationDTO) throws UserNotFoundException {
+    public UserProfileDTO addEducation(UUID userId, AddEducationDTO educationDTO) {
         User user = userHelper.getUserById(userId);
         Education entity = new Education();
         entity.setStartDate(educationDTO.startDate());
@@ -83,13 +82,36 @@ public class UserWriteServiceImpl implements UserWriteService {
     }
 
     @Transactional
-    public UserProfileDTO deleteEducation(UUID userId, UUID educationId) throws UserNotFoundException {
+    public UserProfileDTO deleteEducation(UUID userId, UUID educationId) {
         User user = userHelper.getUserById(userId);
         List<Education> educations = user.getEducations();
         educations.removeIf((education) -> {
             return education.getId().equals(educationId);
         });
 
+        return UserMapper.toUserProfileDTO(userRepository.save(user));
+    }
+
+    /**
+     * Skill section
+     */
+
+    public UserProfileDTO addSkill(UUID userId, String skill) throws DuplicateSkillException {
+        User user = userHelper.getUserById(userId);
+        Set<String> skills = user.getSkills();
+        if (skills.contains(skill)) {
+            log.warn("Add skill fail: skill {} already exists", skill);
+            throw new DuplicateSkillException("Skill: " + skill + " already exists");
+        }
+
+        skills.add(skill);
+        userRepository.save(user);
+        return UserMapper.toUserProfileDTO(user);
+    }
+
+    public UserProfileDTO deleteSkill(UUID userId, String skill) {
+        User user = userHelper.getUserById(userId);
+        user.getSkills().remove(skill);
         return UserMapper.toUserProfileDTO(userRepository.save(user));
     }
 }

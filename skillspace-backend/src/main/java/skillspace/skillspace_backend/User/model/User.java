@@ -2,6 +2,7 @@ package skillspace.skillspace_backend.User.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
@@ -34,7 +35,7 @@ public class User extends BaseUser {
         name = "user_skills",
         joinColumns = @JoinColumn(name = "user_id")
     )
-    private List<String> skills;
+    private Set<String> skills;
 
     @OneToMany(
         mappedBy = "user",

@@ -63,4 +63,24 @@ public class UserWriteController {
         log.info("Successfully delete educationId {} of userId {}", educationId, userId);
         return userProfileDTO;
     }
+
+    /**
+     * Skill section
+     */
+    @PostMapping(ApiPath.USER + "/{userId}/skill/{skill}")
+    public UserProfileDTO addSkill(@PathVariable UUID userId, @PathVariable String skill) {
+        log.info("Add skill {} for userId {}", skill, userId);
+        UserProfileDTO userProfileDTO = userWriteService.addSkill(userId, skill);
+        log.info("Successfully add skill {}", skill);
+        return userProfileDTO;
+    }
+
+    @DeleteMapping(ApiPath.USER + "/{userId}/skill/{skill}")
+    public UserProfileDTO deleteSkill(@PathVariable UUID userId, @PathVariable String skill) {
+        log.info("Delete skill {} for userId {}", skill, userId);
+        UserProfileDTO userProfileDTO = userWriteService.deleteSkill(userId, skill);
+        log.info("Successfully delete skill {}", skill);
+        return userProfileDTO;
+    }
+    
 }
