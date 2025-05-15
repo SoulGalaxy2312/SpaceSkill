@@ -3,6 +3,8 @@ package skillspace.skillspace_backend.User.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import lombok.extern.slf4j.Slf4j;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
 import skillspace.skillspace_backend.User.service.UserReadService;
@@ -26,7 +28,7 @@ public class UserReadController {
     } 
 
     @GetMapping("/{userId}/profile")
-    public UserProfileDTO getUserProfile(@PathVariable UUID userId) {
+    public UserProfileDTO getUserProfile(@PathVariable UUID userId)  throws JsonProcessingException {
         log.info("Attempting to get user profile with id: {}", userId);
         UserProfileDTO profile = userReadService.getUserProfile(userId);
         log.info("Successfully get user profile with id: {}", userId);

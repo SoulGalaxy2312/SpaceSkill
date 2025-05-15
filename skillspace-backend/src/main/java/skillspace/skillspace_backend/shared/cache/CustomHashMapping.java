@@ -11,6 +11,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class CustomHashMapping<T> {
     
     private final RedisTemplate<String, String> redisTemplate;
-    private ObjectMapper mapper = new ObjectMapper();
+    private ObjectMapper mapper = new ObjectMapper()
+                                    .registerModule(new JavaTimeModule())
+                                    .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     public CustomHashMapping(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -28,7 +32,7 @@ public abstract class CustomHashMapping<T> {
     protected void writeHash(String key, T value, Duration duration) throws JsonProcessingException {
         log.info("Write cache for key {}", key);
         String serialized = mapper.writeValueAsString(value);
-        redisTemplate.opsForValue().set(key, serialized);
+        redisTemplate.opsForValue().set(key, serialized, duration);
     }
 
     protected void writeHash(String key, List<T> value, Duration duration) throws JsonProcessingException {

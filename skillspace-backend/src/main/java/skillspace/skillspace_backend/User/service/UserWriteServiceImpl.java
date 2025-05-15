@@ -4,8 +4,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -25,12 +26,14 @@ public class UserWriteServiceImpl implements UserWriteService {
 
     private final UserRepository userRepository;
     private final UserHelper userHelper;
+    private final UserProfileDTOLoadAndCacheService cacheService;
 
     public UserWriteServiceImpl(
-        UserRepository userRepository, 
-        PasswordEncoder passwordEncoder, 
-        UserHelper userHelper) {
+        UserRepository userRepository,
+        UserHelper userHelper,
+        UserProfileDTOLoadAndCacheService cacheService) {
 
+        this.cacheService = cacheService;
         this.userRepository = userRepository;
         this.userHelper = userHelper;
     }
@@ -39,7 +42,7 @@ public class UserWriteServiceImpl implements UserWriteService {
      * Experience section
      */
     @Transactional
-    public UserProfileDTO addExperience(UUID userId, AddExperienceDTO dto) {
+    public UserProfileDTO addExperience(UUID userId, AddExperienceDTO dto) throws JsonProcessingException {
         User user = userHelper.getUserById(userId);
         
         Experience entity = new Experience();
@@ -50,25 +53,29 @@ public class UserWriteServiceImpl implements UserWriteService {
         entity.setUser(user);
 
         user.getExperiences().add(entity);
-        return UserMapper.toUserProfileDTO(userRepository.save(user));
+
+        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user));
+        cacheService.writeHash(userId, profile);
+        return profile;
     }
 
     @Transactional
-    public UserProfileDTO deleteExperience(UUID userId, UUID experienceId) {
+    public UserProfileDTO deleteExperience(UUID userId, UUID experienceId) throws JsonProcessingException {
         User user = userHelper.getUserById(userId);
         List<Experience> experiences = user.getExperiences();
         experiences.removeIf((experience) -> {
             return experience.getId().equals(experienceId);
         });
-        
-        return UserMapper.toUserProfileDTO(userRepository.save(user));
+        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user));
+        cacheService.writeHash(userId, profile);
+        return profile;
     }
 
     /**
      * Education section
      */
     @Transactional
-    public UserProfileDTO addEducation(UUID userId, AddEducationDTO educationDTO) {
+    public UserProfileDTO addEducation(UUID userId, AddEducationDTO educationDTO) throws JsonProcessingException {
         User user = userHelper.getUserById(userId);
         Education entity = new Education();
         entity.setStartDate(educationDTO.startDate());
@@ -78,40 +85,45 @@ public class UserWriteServiceImpl implements UserWriteService {
         entity.setDegree(educationDTO.degree());
         
         user.getEducations().add(entity);
-        return UserMapper.toUserProfileDTO(userRepository.save(user));
+        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user));
+        cacheService.writeHash(userId, profile);
+        return profile;
     }
 
     @Transactional
-    public UserProfileDTO deleteEducation(UUID userId, UUID educationId) {
+    public UserProfileDTO deleteEducation(UUID userId, UUID educationId) throws JsonProcessingException {
         User user = userHelper.getUserById(userId);
         List<Education> educations = user.getEducations();
         educations.removeIf((education) -> {
             return education.getId().equals(educationId);
         });
-
-        return UserMapper.toUserProfileDTO(userRepository.save(user));
+        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user));
+        cacheService.writeHash(userId, profile);
+        return profile;
     }
 
     /**
      * Skill section
      */
 
-    public UserProfileDTO addSkill(UUID userId, String skill) throws DuplicateSkillException {
+    public UserProfileDTO addSkill(UUID userId, String skill) throws DuplicateSkillException, JsonProcessingException {
         User user = userHelper.getUserById(userId);
         Set<String> skills = user.getSkills();
         if (skills.contains(skill)) {
             log.warn("Add skill fail: skill {} already exists", skill);
             throw new DuplicateSkillException("Skill: " + skill + " already exists");
         }
-
         skills.add(skill);
-        userRepository.save(user);
-        return UserMapper.toUserProfileDTO(user);
+        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user));
+        cacheService.writeHash(userId, profile);
+        return profile;
     }
 
-    public UserProfileDTO deleteSkill(UUID userId, String skill) {
+    public UserProfileDTO deleteSkill(UUID userId, String skill) throws JsonProcessingException {
         User user = userHelper.getUserById(userId);
         user.getSkills().remove(skill);
-        return UserMapper.toUserProfileDTO(userRepository.save(user));
+        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user));
+        cacheService.writeHash(userId, profile);
+        return profile;
     }
 }

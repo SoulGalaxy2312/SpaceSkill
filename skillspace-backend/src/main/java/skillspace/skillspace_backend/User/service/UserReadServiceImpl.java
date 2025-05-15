@@ -1,32 +1,40 @@
 package skillspace.skillspace_backend.User.service;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.extern.slf4j.Slf4j;
 import skillspace.skillspace_backend.User.exception.UserNotFoundException;
 import skillspace.skillspace_backend.User.mapper.UserMapper;
 import skillspace.skillspace_backend.User.model.User;
-import skillspace.skillspace_backend.User.repository.UserRepository;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
 
 @Service
 @Slf4j
 public class UserReadServiceImpl implements UserReadService {
-    private final UserRepository userRepository;
+    private final UserProfileDTOLoadAndCacheService cacheService;
+    private final UserHelper userHelper;
 
-    public UserReadServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserReadServiceImpl(UserProfileDTOLoadAndCacheService cacheService, UserHelper userHelper) {
+        this.cacheService = cacheService;
+        this.userHelper = userHelper;
     }
 
-    public UserProfileDTO getUserProfile(UUID userId) throws UserNotFoundException {
-        User user = userRepository.findById(userId)
-                        .orElseThrow(() -> {
-                            log.warn("Get user profile failed: User with ID {} was not found.", userId);
-                            return new UserNotFoundException(userId);
-                        });
+    public UserProfileDTO getUserProfile(UUID userId) throws UserNotFoundException, JsonProcessingException {
+        Supplier<UserProfileDTO> dataSupplier = () -> {
+            try {
+                User user = userHelper.getUserById(userId);
+                return UserMapper.toUserProfileDTO(user);    
+            } catch (UserNotFoundException ex) {
+                throw ex;
+            }
+        };
 
-        return UserMapper.toUserProfileDTO(user);
+        UserProfileDTO profile = cacheService.loadAndCacheUserProfileDTO(userId, dataSupplier);
+        return profile;
     }
 }
