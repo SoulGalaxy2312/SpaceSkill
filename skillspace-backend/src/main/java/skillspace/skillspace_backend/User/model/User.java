@@ -28,8 +28,6 @@ import skillspace.skillspace_backend.shared.model.BaseUser;
 @Table(name = "users")
 public class User extends BaseUser {
 
-    private String about;
-
     @ElementCollection
     @CollectionTable(
         name = "user_skills",

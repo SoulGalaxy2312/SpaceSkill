@@ -8,4 +8,7 @@ public class ApiPath {
 
     // User APIs
     public static final String USER = API + "/user";
+
+    // Company APIs
+    public static final String COMPANY = API + "/company";
 }
