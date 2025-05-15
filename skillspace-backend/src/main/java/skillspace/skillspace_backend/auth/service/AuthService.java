@@ -1,11 +1,11 @@
 package skillspace.skillspace_backend.auth.service;
 
 import skillspace.skillspace_backend.User.exception.UserNotFoundException;
-import skillspace.skillspace_backend.User.exception.UsernameExistsException;
+import skillspace.skillspace_backend.auth.exception.EmailAlreadyUsedException;
 import skillspace.skillspace_backend.auth.request.LoginDTO;
-import skillspace.skillspace_backend.auth.request.UserRegisterDTO;
+import skillspace.skillspace_backend.auth.request.RegisterDTO;
 
 public interface AuthService {
-    void register(UserRegisterDTO dto) throws UsernameExistsException;
+    void register(RegisterDTO dto) throws EmailAlreadyUsedException;
     String login(LoginDTO dto) throws UserNotFoundException;
 }

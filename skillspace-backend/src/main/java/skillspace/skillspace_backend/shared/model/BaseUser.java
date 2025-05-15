@@ -35,6 +35,8 @@ public abstract class BaseUser {
     
     private String location;
 
+    private String about;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;

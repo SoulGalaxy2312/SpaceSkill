@@ -2,7 +2,7 @@ package skillspace.skillspace_backend.auth.request;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record UserRegisterDTO(
+public record RegisterDTO(
     @NotBlank(message = "Email must not be blank")
     String email,
 
@@ -10,6 +10,7 @@ public record UserRegisterDTO(
     String password, 
 
     String profileName,
-    String location
+    String location,
+    boolean isCompany
 ) {    
 }

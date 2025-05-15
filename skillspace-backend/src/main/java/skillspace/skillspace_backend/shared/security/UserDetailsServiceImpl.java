@@ -5,22 +5,26 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import skillspace.skillspace_backend.User.model.User;
+import skillspace.skillspace_backend.Company.repository.CompanyRepository;
 import skillspace.skillspace_backend.User.repository.UserRepository;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
     
     private final UserRepository userRepository;
+    private final CompanyRepository companyRepository;
 
-    public UserDetailsServiceImpl(UserRepository userRepository) {
+    public UserDetailsServiceImpl(UserRepository userRepository, CompanyRepository companyRepository) {
         this.userRepository = userRepository;
+        this.companyRepository = companyRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
-        return new UserPrincipal(user);
+        return userRepository.findByEmail(email)
+                .map(UserPrincipal::new)
+                .or(() -> companyRepository.findByEmail(email)
+                                            .map(UserPrincipal::new))
+                .orElseThrow(() -> new UsernameNotFoundException("No user or company found with email: " + email));
     }
 }

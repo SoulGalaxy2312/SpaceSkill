@@ -5,16 +5,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import skillspace.skillspace_backend.Company.exception.CompanyNotFoundException;
 import skillspace.skillspace_backend.User.exception.DuplicateSkillException;
 import skillspace.skillspace_backend.User.exception.UserNotFoundException;
-import skillspace.skillspace_backend.User.exception.UsernameExistsException;
+import skillspace.skillspace_backend.auth.exception.EmailAlreadyUsedException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(UsernameExistsException.class)
+    @ExceptionHandler(EmailAlreadyUsedException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public String handleUsernameExistsException(UsernameExistsException ex) {
+    public String handleUsernameExistsException(EmailAlreadyUsedException ex) {
         return ex.getMessage();
     }
 
@@ -27,6 +28,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicateSkillException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handleDuplicateSkillException(DuplicateSkillException ex) {
+        return ex.getMessage();
+    }
+
+    @ExceptionHandler(CompanyNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleCompanyNotFoundException(CompanyNotFoundException ex) {
         return ex.getMessage();
     }
 }

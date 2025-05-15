@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 import skillspace.skillspace_backend.auth.request.LoginDTO;
-import skillspace.skillspace_backend.auth.request.UserRegisterDTO;
+import skillspace.skillspace_backend.auth.request.RegisterDTO;
 import skillspace.skillspace_backend.auth.response.JwtAuthenticationResponse;
 import skillspace.skillspace_backend.auth.service.AuthService;
 import skillspace.skillspace_backend.shared.constants.ApiPath;
@@ -21,7 +21,7 @@ public class AuthController {
     }
     
     @PostMapping(ApiPath.AUTH + "/register")
-    public void register(@RequestBody UserRegisterDTO userRegisterDTO) {
+    public void register(@RequestBody RegisterDTO userRegisterDTO) {
         log.info("Register user with email: {}", userRegisterDTO.email());
         authService.register(userRegisterDTO);
         log.info("Successfully registered user with email: {}", userRegisterDTO.email());

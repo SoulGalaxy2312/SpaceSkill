@@ -7,12 +7,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import skillspace.skillspace_backend.User.model.User;
+import skillspace.skillspace_backend.shared.model.BaseUser;
 
 public class UserPrincipal implements UserDetails {
-    private final User user;
+    private final BaseUser user;
 
-    public UserPrincipal(User user) {
+    public UserPrincipal(BaseUser user) {
         this.user = user;
     }
 

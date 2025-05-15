@@ -8,12 +8,14 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import skillspace.skillspace_backend.User.exception.UsernameExistsException;
+import skillspace.skillspace_backend.Company.model.Company;
+import skillspace.skillspace_backend.Company.repository.CompanyRepository;
 import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.User.repository.UserRepository;
+import skillspace.skillspace_backend.auth.exception.EmailAlreadyUsedException;
 import skillspace.skillspace_backend.auth.exception.WrongCredentialsException;
 import skillspace.skillspace_backend.auth.request.LoginDTO;
-import skillspace.skillspace_backend.auth.request.UserRegisterDTO;
+import skillspace.skillspace_backend.auth.request.RegisterDTO;
 import skillspace.skillspace_backend.shared.security.jwt.JwtTokenProvider;
 
 @Service
@@ -23,37 +25,48 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
+    private final CompanyRepository companyRepository;
 
     public AuthServiceImpl(
         PasswordEncoder passwordEncoder, 
         UserRepository userRepository, 
         JwtTokenProvider jwtTokenProvider,
-        AuthenticationManager authenticationManager) {
+        AuthenticationManager authenticationManager,
+        CompanyRepository companyRepository) {
         
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.authenticationManager = authenticationManager;
+        this.companyRepository = companyRepository;
     }
 
     @Transactional
-    public void register(UserRegisterDTO userRegisterDTO) throws UsernameExistsException {
-        boolean isEmailExists = userRepository
-                                .findByEmail(userRegisterDTO.email())   
-                                .isPresent();
-        
-        if (isEmailExists) {
-            log.warn("Registration failed: Email {} already exists", userRegisterDTO.email());
-            throw new UsernameExistsException();
-        }
+    public void register(RegisterDTO registerDTO) throws EmailAlreadyUsedException {
+        boolean isCompany = registerDTO.isCompany();
+        String email = registerDTO.email();
 
-        User newUser = new User();
-        newUser.setProfileName(userRegisterDTO.profileName().isBlank() ? "Anonymous" : userRegisterDTO.profileName());
-        newUser.setLocation(userRegisterDTO.location());
-        newUser.setPassword(passwordEncoder.encode(userRegisterDTO.password()));
-        newUser.setEmail(userRegisterDTO.email());
+        if (companyRepository.findByEmail(email).isPresent()
+            || userRepository.findByEmail(email).isPresent()) {
+                log.warn("Registration failed: Email {} already be used", email);
+                throw new EmailAlreadyUsedException(email);
+            }
         
-        userRepository.save(newUser);
+        if (isCompany) {
+            Company newCompany = new Company();
+            newCompany.setProfileName(registerDTO.profileName());
+            newCompany.setLocation(registerDTO.location());
+            newCompany.setPassword(passwordEncoder.encode(registerDTO.password()));
+            newCompany.setEmail(email);
+            companyRepository.save(newCompany);
+        } else {
+            User newUser = new User();
+            newUser.setProfileName(registerDTO.profileName().isBlank() ? "Anonymous" : registerDTO.profileName());
+            newUser.setLocation(registerDTO.location());
+            newUser.setPassword(passwordEncoder.encode(registerDTO.password()));
+            newUser.setEmail(registerDTO.email());
+            userRepository.save(newUser);
+        }
     }
 
     public String login(LoginDTO dto) throws WrongCredentialsException {
@@ -61,7 +74,7 @@ public class AuthServiceImpl implements AuthService {
             authenticationManager
                 .authenticate(
                     new UsernamePasswordAuthenticationToken(
-                        dto.email(), 
+                        dto.email(),
                         dto.password()));
 
         if (authentication == null || !authentication.isAuthenticated()) 
