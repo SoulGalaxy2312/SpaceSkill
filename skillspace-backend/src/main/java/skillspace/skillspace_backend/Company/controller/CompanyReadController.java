@@ -23,5 +23,4 @@ public class CompanyReadController {
     public CompanyProfileDTO getCompanyProfile(@PathVariable UUID companyId) {
         return companyReadService.getCompanyProfile(companyId);
     }
-    
 }
