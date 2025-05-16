@@ -25,4 +25,12 @@ public class CompanyHelper {
                     return new CompanyNotFoundException("Company with id" + companyId + " was not found");
                 });
     }
+
+    public Company getCompany(String email) throws CompanyNotFoundException {
+        return companyRepository.findByEmail(email)
+                .orElseThrow(() -> {
+                    log.warn("Company with email {} was not found", email);
+                    return new CompanyNotFoundException("Company with email " + email + " was not found");
+                });
+    }
 }

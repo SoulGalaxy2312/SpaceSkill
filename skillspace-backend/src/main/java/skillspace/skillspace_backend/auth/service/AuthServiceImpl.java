@@ -1,6 +1,7 @@
 package skillspace.skillspace_backend.auth.service;
 
 import org.springframework.security.core.Authentication;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,7 +14,6 @@ import skillspace.skillspace_backend.Company.repository.CompanyRepository;
 import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.User.repository.UserRepository;
 import skillspace.skillspace_backend.auth.exception.EmailAlreadyUsedException;
-import skillspace.skillspace_backend.auth.exception.WrongCredentialsException;
 import skillspace.skillspace_backend.auth.request.LoginDTO;
 import skillspace.skillspace_backend.auth.request.RegisterDTO;
 import skillspace.skillspace_backend.shared.security.jwt.JwtTokenProvider;
@@ -69,17 +69,14 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
-    public String login(LoginDTO dto) throws WrongCredentialsException {
+    public String login(LoginDTO dto) {
         Authentication authentication =
             authenticationManager
                 .authenticate(
                     new UsernamePasswordAuthenticationToken(
                         dto.email(),
                         dto.password()));
-
-        if (authentication == null || !authentication.isAuthenticated()) 
-            throw new WrongCredentialsException("Wrong credentials");
-
+        
         return jwtTokenProvider.generateToken(dto.email());
     }
 }
