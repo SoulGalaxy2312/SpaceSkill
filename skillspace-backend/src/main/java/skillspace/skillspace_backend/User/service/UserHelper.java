@@ -25,4 +25,12 @@ public class UserHelper {
                         return new UserNotFoundException(userId);
                     });
     }
+
+    public User getUserByEmail(String email) throws UserNotFoundException {
+        return userRepository.findByEmail(email)
+                    .orElseThrow(() -> {
+                        log.warn("User with email {} was not found", email);
+                        return new UserNotFoundException(email);
+                    });
+    }
 }

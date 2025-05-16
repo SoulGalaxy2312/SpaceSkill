@@ -1,0 +1,45 @@
+package skillspace.skillspace_backend.Application.model;
+
+import java.time.LocalDate;
+import java.util.UUID;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import skillspace.skillspace_backend.Job.model.Job;
+import skillspace.skillspace_backend.User.model.User;
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "applications")
+public class Application {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @ManyToOne
+    private User user;
+
+    @ManyToOne
+    private Job job;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDate appliedAt;
+
+    private String resumeUrl;
+
+    @PrePersist
+    public void prePersist() {
+        this.appliedAt = LocalDate.now();
+    }
+}

@@ -14,4 +14,7 @@ public class ApiPath {
 
     // Job APIs
     public static final String JOB =  API + "/job";
+
+    // Application APIs
+    public static final String APPLICATION = API + "/application";
 }
