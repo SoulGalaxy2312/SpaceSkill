@@ -65,4 +65,18 @@ public class JobWriteServiceImpl implements JobWriteService {
         Job savedJob = jobRepository.save(job);
         return JobMapper.toJobResponseDTO(savedJob);
     }
+
+    public void deleteJob(UUID jobId) throws AccessDeniedException {
+        Job job = jobHelper.getJob(jobId);
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Company company = companyHelper.getCompany(email);
+
+        if (!job.getCompany().getId().equals(company.getId())) {
+            log.warn("Current company is not authorized to update this job");
+            throw new AccessDeniedException("You are not authorized to update this job");
+        }
+
+        jobRepository.delete(job);
+
+    }
 }
