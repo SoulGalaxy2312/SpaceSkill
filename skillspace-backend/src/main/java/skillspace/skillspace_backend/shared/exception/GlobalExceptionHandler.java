@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import skillspace.skillspace_backend.Company.exception.CompanyNotFoundException;
+import skillspace.skillspace_backend.Job.exception.JobNotFoundException;
 import skillspace.skillspace_backend.User.exception.DuplicateSkillException;
 import skillspace.skillspace_backend.User.exception.UserNotFoundException;
 import skillspace.skillspace_backend.auth.exception.EmailAlreadyUsedException;
@@ -46,4 +47,9 @@ public class GlobalExceptionHandler {
         return ex.getMessage();
     }
 
+    @ExceptionHandler(JobNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleJobNotFoundException(JobNotFoundException ex) {
+        return ex.getMessage();
+    }
 }

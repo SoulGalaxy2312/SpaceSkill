@@ -1,8 +1,13 @@
 package skillspace.skillspace_backend.Job.service;
 
-import skillspace.skillspace_backend.Job.request.CreateJobRequestDTO;
-import skillspace.skillspace_backend.Job.response.CreateJobResponseDTO;
+import java.util.UUID;
+
+import org.springframework.security.access.AccessDeniedException;
+
+import skillspace.skillspace_backend.Job.request.JobRequestDTO;
+import skillspace.skillspace_backend.Job.response.JobResponseDTO;
 
 public interface JobWriteService {
-    CreateJobResponseDTO createJob(CreateJobRequestDTO createJobDTO);
+    JobResponseDTO createJob(JobRequestDTO createJobDTO);
+    JobResponseDTO updateJob(UUID jobId, JobRequestDTO updateJobDTO) throws AccessDeniedException;
 }

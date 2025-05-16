@@ -5,7 +5,7 @@ import java.util.Set;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 
-public record CreateJobRequestDTO (
+public record JobRequestDTO (
     @NotBlank(message = "Title must not be blank")
     String title,
 
