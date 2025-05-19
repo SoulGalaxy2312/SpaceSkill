@@ -41,6 +41,7 @@ public class SecurityConfig {
                 .csrf(crsf -> crsf.disable())
                 .authorizeHttpRequests(auth -> auth
                     .requestMatchers(ApiPath.JOB + "/**").authenticated()
+                    .requestMatchers(ApiPath.COMPANY + "/**").authenticated()
                     .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
