@@ -4,12 +4,12 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import skillspace.skillspace_backend.Job.request.JobApplicationDTO;
-import skillspace.skillspace_backend.User.response.UserApplicationDTO;
+import skillspace.skillspace_backend.User.response.UserBriefDTO;
 
 public record ApplicationResponseDTO(
     UUID id,
     JobApplicationDTO job,
-    UserApplicationDTO user,
+    UserBriefDTO user,
     LocalDate appliedAt,
     String resumeUrl
 ) {

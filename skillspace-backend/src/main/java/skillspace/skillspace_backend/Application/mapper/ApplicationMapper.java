@@ -11,7 +11,7 @@ public class ApplicationMapper {
         return new ApplicationResponseDTO(
             entity.getId(), 
             JobMapper.toJobApplicationDTO(entity.getJob()),
-            UserMapper.toUserApplicationDTO(entity.getUser()),
+            UserMapper.toUserBriefDTO(entity.getUser()),
             entity.getAppliedAt(), 
             entity.getResumeUrl());
     }
