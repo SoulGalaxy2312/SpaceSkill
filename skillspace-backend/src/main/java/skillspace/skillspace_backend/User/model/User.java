@@ -1,6 +1,7 @@
 package skillspace.skillspace_backend.User.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -17,6 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import skillspace.skillspace_backend.Application.model.Application;
 import skillspace.skillspace_backend.shared.enums.UserRole;
 import skillspace.skillspace_backend.shared.model.BaseUser;
 
@@ -50,6 +52,9 @@ public class User extends BaseUser {
         orphanRemoval = true
     )
     private List<Education> educations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Application> applications = new HashSet<>();
 
     @PrePersist
     public void prePersist() {
