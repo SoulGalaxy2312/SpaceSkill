@@ -3,11 +3,13 @@ package skillspace.skillspace_backend.Application.response;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import skillspace.skillspace_backend.Job.response.JobResponseDTO;
+import skillspace.skillspace_backend.Job.request.JobApplicationDTO;
+import skillspace.skillspace_backend.User.response.UserApplicationDTO;
 
 public record ApplicationResponseDTO(
     UUID id,
-    JobResponseDTO job,
+    JobApplicationDTO job,
+    UserApplicationDTO user,
     LocalDate appliedAt,
     String resumeUrl
 ) {
