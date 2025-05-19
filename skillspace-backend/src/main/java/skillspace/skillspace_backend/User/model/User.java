@@ -11,6 +11,7 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
@@ -19,6 +20,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import skillspace.skillspace_backend.Application.model.Application;
+import skillspace.skillspace_backend.Company.model.Company;
 import skillspace.skillspace_backend.shared.enums.UserRole;
 import skillspace.skillspace_backend.shared.model.BaseUser;
 
@@ -56,6 +58,9 @@ public class User extends BaseUser {
     @OneToMany(mappedBy = "user")
     private Set<Application> applications = new HashSet<>();
 
+    @ManyToMany(mappedBy = "recruiters")
+    private Set<Company> partnerCompanies = new HashSet<>();
+    
     @PrePersist
     public void prePersist() {
         setRole(UserRole.USER);
