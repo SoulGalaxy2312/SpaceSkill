@@ -13,6 +13,8 @@ public class ApplicationMapper {
             JobMapper.toJobApplicationDTO(entity.getJob()),
             UserMapper.toUserBriefDTO(entity.getUser()),
             entity.getAppliedAt(), 
-            entity.getResumeUrl());
+            entity.getResumeUrl(),
+            entity.getStatus(),
+            entity.getReviewerNote());
     }
 }

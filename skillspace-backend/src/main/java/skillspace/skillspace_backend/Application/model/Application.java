@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,6 +19,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import skillspace.skillspace_backend.Job.model.Job;
 import skillspace.skillspace_backend.User.model.User;
+import skillspace.skillspace_backend.shared.enums.ApplicationStatus;
 
 @Entity
 @Data
@@ -41,6 +44,11 @@ public class Application {
 
     private String resumeUrl;
 
+    @Enumerated(EnumType.STRING)
+    private ApplicationStatus status;
+
+    private String reviewerNote;
+    
     @PrePersist
     public void prePersist() {
         this.appliedAt = LocalDate.now();

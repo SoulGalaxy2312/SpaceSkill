@@ -2,7 +2,9 @@ package skillspace.skillspace_backend.Application.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.slf4j.Slf4j;
 import skillspace.skillspace_backend.Application.request.ApplicationRequestDTO;
+import skillspace.skillspace_backend.Application.request.ProcessApplicationRequestDTO;
 import skillspace.skillspace_backend.Application.response.ApplicationResponseDTO;
 import skillspace.skillspace_backend.Application.service.ApplicationWriteService;
 import skillspace.skillspace_backend.shared.constants.ApiPath;
@@ -10,12 +12,14 @@ import skillspace.skillspace_backend.shared.constants.ApiPath;
 import java.util.UUID;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
+@Slf4j
 public class ApplicationWriteController {
     private final ApplicationWriteService applicationWriteService;
 
@@ -27,6 +31,13 @@ public class ApplicationWriteController {
     @PreAuthorize("hasRole('USER')")
     public ApplicationResponseDTO applyJob(@PathVariable UUID jobId, @RequestBody ApplicationRequestDTO requestDTO) {
         return applicationWriteService.applyJob(jobId, requestDTO);    
+    }
+    
+    @PatchMapping(ApiPath.APPLICATION + "/{applicationId}/processApplication")
+    @PreAuthorize("isAuthenticated()")
+    public ApplicationResponseDTO processApplication(@PathVariable UUID applicationId, @RequestBody ProcessApplicationRequestDTO dto) {
+        log.debug("Attempting to process application with id {}", applicationId);
+        return applicationWriteService.processApplication(applicationId, dto);
     }
     
 }
