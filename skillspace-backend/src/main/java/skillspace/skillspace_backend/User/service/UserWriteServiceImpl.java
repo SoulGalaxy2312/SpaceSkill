@@ -1,7 +1,6 @@
 package skillspace.skillspace_backend.User.service;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -19,6 +18,7 @@ import skillspace.skillspace_backend.User.repository.UserRepository;
 import skillspace.skillspace_backend.User.request.AddEducationDTO;
 import skillspace.skillspace_backend.User.request.AddExperienceDTO;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
+import skillspace.skillspace_backend.shared.security.service.SecurityService;
 
 @Service
 @Slf4j
@@ -27,15 +27,18 @@ public class UserWriteServiceImpl implements UserWriteService {
     private final UserRepository userRepository;
     private final UserHelper userHelper;
     private final UserProfileDTOLoadAndCacheService cacheService;
+    private final SecurityService securityService;
 
     public UserWriteServiceImpl(
         UserRepository userRepository,
         UserHelper userHelper,
-        UserProfileDTOLoadAndCacheService cacheService) {
+        UserProfileDTOLoadAndCacheService cacheService,
+        SecurityService securityService) {
 
         this.cacheService = cacheService;
         this.userRepository = userRepository;
         this.userHelper = userHelper;
+        this.securityService = securityService;
     }
 
     /**
@@ -43,8 +46,10 @@ public class UserWriteServiceImpl implements UserWriteService {
      */
     @Transactional
     public UserProfileDTO addExperience(UUID userId, AddExperienceDTO dto) throws JsonProcessingException {
+        boolean isCurrentUser = securityService.assertCurrentUserMatches(userId);
+        if (!isCurrentUser) return null;
+
         User user = userHelper.getUserById(userId);
-        
         Experience entity = new Experience();
         entity.setStartDate(dto.startDate());
         entity.setEndDate(dto.endDate());
@@ -53,20 +58,22 @@ public class UserWriteServiceImpl implements UserWriteService {
         entity.setUser(user);
 
         user.getExperiences().add(entity);
-
-        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user));
+        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true);
         cacheService.writeHash(userId, profile);
         return profile;
     }
 
     @Transactional
     public UserProfileDTO deleteExperience(UUID userId, UUID experienceId) throws JsonProcessingException {
+        boolean isCurrentUser = securityService.assertCurrentUserMatches(userId);
+        if (!isCurrentUser) return null;
+
         User user = userHelper.getUserById(userId);
         List<Experience> experiences = user.getExperiences();
         experiences.removeIf((experience) -> {
             return experience.getId().equals(experienceId);
         });
-        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user));
+        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true);
         cacheService.writeHash(userId, profile);
         return profile;
     }
@@ -76,6 +83,9 @@ public class UserWriteServiceImpl implements UserWriteService {
      */
     @Transactional
     public UserProfileDTO addEducation(UUID userId, AddEducationDTO educationDTO) throws JsonProcessingException {
+        boolean isCurrentUser = securityService.assertCurrentUserMatches(userId);
+        if (!isCurrentUser) return null;
+        
         User user = userHelper.getUserById(userId);
         Education entity = new Education();
         entity.setStartDate(educationDTO.startDate());
@@ -85,19 +95,22 @@ public class UserWriteServiceImpl implements UserWriteService {
         entity.setDegree(educationDTO.degree());
         
         user.getEducations().add(entity);
-        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user));
+        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true);
         cacheService.writeHash(userId, profile);
         return profile;
     }
 
     @Transactional
     public UserProfileDTO deleteEducation(UUID userId, UUID educationId) throws JsonProcessingException {
+        boolean isCurrentUser = securityService.assertCurrentUserMatches(userId);
+        if (!isCurrentUser) return null;
+
         User user = userHelper.getUserById(userId);
         List<Education> educations = user.getEducations();
         educations.removeIf((education) -> {
             return education.getId().equals(educationId);
         });
-        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user));
+        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true);
         cacheService.writeHash(userId, profile);
         return profile;
     }
@@ -107,22 +120,28 @@ public class UserWriteServiceImpl implements UserWriteService {
      */
 
     public UserProfileDTO addSkill(UUID userId, String skill) throws DuplicateSkillException, JsonProcessingException {
+        boolean isCurrentUser = securityService.assertCurrentUserMatches(userId);
+        if (!isCurrentUser) return null;
+
         User user = userHelper.getUserById(userId);
-        Set<String> skills = user.getSkills();
+        List<String> skills = user.getSkills();
         if (skills.contains(skill)) {
             log.warn("Add skill fail: skill {} already exists", skill);
             throw new DuplicateSkillException("Skill: " + skill + " already exists");
         }
         skills.add(skill);
-        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user));
+        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true);
         cacheService.writeHash(userId, profile);
         return profile;
     }
 
     public UserProfileDTO deleteSkill(UUID userId, String skill) throws JsonProcessingException {
+        boolean isCurrentUser = securityService.assertCurrentUserMatches(userId);
+        if (!isCurrentUser) return null;
+
         User user = userHelper.getUserById(userId);
         user.getSkills().remove(skill);
-        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user));
+        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true);
         cacheService.writeHash(userId, profile);
         return profile;
     }

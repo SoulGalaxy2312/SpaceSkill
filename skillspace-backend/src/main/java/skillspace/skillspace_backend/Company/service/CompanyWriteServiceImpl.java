@@ -36,8 +36,10 @@ public class CompanyWriteServiceImpl implements CompanyWriteService {
     }
 
     public void updateCompanyProfile(UUID companyId, UpdateCompanyProfileDTO dto) {
-        Company company = companyHelper.getCompany(companyId);
+        boolean isCurrentCompany = securityService.assertCurrentUserMatches(companyId);
+        if (!isCurrentCompany) return;
 
+        Company company = companyHelper.getCompany(companyId);
         if (dto.profileName() != null) company.setProfileName(dto.profileName());
         if (dto.location() != null) company.setLocation(dto.location());
         if (dto.about() != null) company.setAbout(dto.about());
@@ -46,6 +48,9 @@ public class CompanyWriteServiceImpl implements CompanyWriteService {
     }
 
     public void addRecruiter(UUID companyId, AddRecruiterDTO dto) throws AccessDeniedException {
+        boolean isCurrentCompany = securityService.assertCurrentUserMatches(companyId);
+        if (!isCurrentCompany) return;
+        
         log.debug("Add recruiter method");
         Company company = securityService.getCurrentCompany();
         if (!companyId.equals(company.getId())) {

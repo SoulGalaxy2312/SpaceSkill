@@ -6,12 +6,13 @@ import skillspace.skillspace_backend.Company.response.CompanyProfileDTO;
 
 public class CompanyMapper {
     
-    public static CompanyProfileDTO toCompanyProfileDTO(Company entity) {
+    public static CompanyProfileDTO toCompanyProfileDTO(Company entity, boolean isCurrentCompany) {
         return new CompanyProfileDTO(
             entity.getId(),
             entity.getProfileName(),
             entity.getLocation(),
-            entity.getAbout());
+            entity.getAbout(),
+            isCurrentCompany);
     }
 
     public static CompanyApplicationDTO toCompanyApplicationDTO(Company entity) {

@@ -12,21 +12,27 @@ import skillspace.skillspace_backend.Company.response.CompanyProfileDTO;
 import skillspace.skillspace_backend.User.mapper.UserMapper;
 import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.User.response.UserBriefDTO;
+import skillspace.skillspace_backend.shared.security.service.SecurityService;
 
 @Service
 public class CompanyReadServiceImpl implements CompanyReadService {
     private final CompanyHelper companyHelper;
+    private final SecurityService securityService;
 
-    public CompanyReadServiceImpl(CompanyHelper companyHelper) {
+    public CompanyReadServiceImpl(CompanyHelper companyHelper, SecurityService securityService) {
         this.companyHelper = companyHelper;
+        this.securityService = securityService;
     }
 
     public CompanyProfileDTO getCompanyProfile(UUID companyId) {
+        boolean isCurrentCompany = securityService.assertCurrentUserMatches(companyId);
         Company company = companyHelper.getCompany(companyId);
-        return CompanyMapper.toCompanyProfileDTO(company);
+        return CompanyMapper.toCompanyProfileDTO(company, isCurrentCompany);
     }
 
     public List<UserBriefDTO> getRecruiters(UUID companyId) {
+        boolean isCurrentCompany = securityService.assertCurrentUserMatches(companyId);
+        if (!isCurrentCompany) return null;
         Company company = companyHelper.getCompany(companyId);
         List<User> recruiters = company.getRecruiters();
         List<UserBriefDTO> response = recruiters.stream()

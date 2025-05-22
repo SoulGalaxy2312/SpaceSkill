@@ -1,7 +1,8 @@
 package skillspace.skillspace_backend.shared.security.service;
 
-import org.springframework.security.access.AccessDeniedException;
+import java.util.UUID;
 
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -41,15 +42,22 @@ public class SecurityService {
     }
 
     public BaseUser getCurrentBaseUser() {
-        String email = getAuthenticationEmail();
+        
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken)
+            return null;
 
+        String email = getAuthenticationEmail();
         if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_COMPANY"))) {
             return companyHelper.getCompany(email); // returns Company, which extends BaseUser
         } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
             return userHelper.getUserByEmail(email); // returns User, which extends BaseUser
-        } else {
-            throw new AccessDeniedException("Unknown role: must be USER or COMPANY");
         }
+        return null;
+    }
+
+    public boolean assertCurrentUserMatches(UUID id) {
+        BaseUser currentBaseUser = getCurrentBaseUser();
+        return (currentBaseUser != null) && id.equals(currentBaseUser.getId());
     }
 }

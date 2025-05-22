@@ -6,7 +6,8 @@ public record CompanyProfileDTO(
     UUID id,
     String profileName,
     String location,
-    String about
+    String about,
+    boolean isCurrentCompany
 ) {
     
 }

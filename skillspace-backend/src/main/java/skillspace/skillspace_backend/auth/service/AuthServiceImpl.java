@@ -1,7 +1,5 @@
 package skillspace.skillspace_backend.auth.service;
 
-import org.springframework.security.core.Authentication;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -70,12 +68,11 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public String login(LoginDTO dto) {
-        Authentication authentication =
-            authenticationManager
-                .authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                        dto.email(),
-                        dto.password()));
+        authenticationManager
+            .authenticate(
+                new UsernamePasswordAuthenticationToken(
+                    dto.email(),
+                    dto.password()));
         
         return jwtTokenProvider.generateToken(dto.email());
     }

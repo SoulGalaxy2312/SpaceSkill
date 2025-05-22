@@ -8,7 +8,7 @@ import skillspace.skillspace_backend.User.response.UserProfileDTO;
 
 public class UserMapper {
     
-    public static UserProfileDTO toUserProfileDTO(User user) {
+    public static UserProfileDTO toUserProfileDTO(User user, boolean isCurrentUser) {
         return new UserProfileDTO(
             user.getId(),
             user.getProfileName(), 
@@ -20,7 +20,8 @@ public class UserMapper {
                                 .collect(Collectors.toList()), 
             user.getEducations().stream()
                                 .map(EducationMapper::toEducationDTO)
-                                .collect(Collectors.toList()));
+                                .collect(Collectors.toList()),
+            isCurrentUser);
     }
 
     public static UserBriefDTO toUserBriefDTO(User user) {

@@ -1,7 +1,6 @@
 package skillspace.skillspace_backend.User.response;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 public record UserProfileDTO(
@@ -9,8 +8,9 @@ public record UserProfileDTO(
     String profileName,
     String location,
     String about,
-    Set<String> skills,
+    List<String> skills,
     List<ExperienceDTO> experiences,
-    List<EducationDTO> educations
+    List<EducationDTO> educations,
+    boolean isCurrentUser
 ) {
 }

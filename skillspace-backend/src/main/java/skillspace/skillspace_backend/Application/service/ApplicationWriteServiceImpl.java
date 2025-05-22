@@ -7,8 +7,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -44,10 +42,7 @@ public class ApplicationWriteServiceImpl implements ApplicationWriteService {
 
     public ApplicationResponseDTO applyJob(UUID jobId, ApplicationRequestDTO request) {
         Job job = jobHelper.getJob(jobId);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-
-        User user = userHelper.getUserByEmail(email);
+        User user = securityService.getCurrentUser();
         
         Application application = new Application();
         application.setJob(job);

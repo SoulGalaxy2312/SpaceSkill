@@ -1,9 +1,7 @@
 package skillspace.skillspace_backend.User.model;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
@@ -37,7 +35,7 @@ public class User extends BaseUser {
         name = "user_skills",
         joinColumns = @JoinColumn(name = "user_id")
     )
-    private Set<String> skills;
+    private List<String> skills;
 
     @OneToMany(
         mappedBy = "user",
@@ -55,11 +53,14 @@ public class User extends BaseUser {
     )
     private List<Education> educations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
-    private Set<Application> applications = new HashSet<>();
+    @OneToMany(
+        mappedBy = "user",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true)
+    private List<Application> applications = new ArrayList<>();
 
     @ManyToMany(mappedBy = "recruiters")
-    private Set<Company> partnerCompanies = new HashSet<>();
+    private List<Company> partnerCompanies = new ArrayList<>();
     
     @PrePersist
     public void prePersist() {
