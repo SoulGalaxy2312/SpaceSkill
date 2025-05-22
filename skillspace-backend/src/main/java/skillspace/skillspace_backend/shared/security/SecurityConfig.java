@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                     .requestMatchers(ApiPath.JOB + "/**").authenticated()
                     .requestMatchers(ApiPath.COMPANY + "/**").authenticated()
+                    .requestMatchers(ApiPath.APPLICATION + "/**").authenticated()
                     .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
