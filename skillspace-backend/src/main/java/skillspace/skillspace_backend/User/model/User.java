@@ -9,6 +9,7 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
@@ -61,7 +62,24 @@ public class User extends BaseUser {
 
     @ManyToMany(mappedBy = "recruiters")
     private List<Company> partnerCompanies = new ArrayList<>();
-    
+
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+        name = "user_connections",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "connected_user_id")
+    )
+    private List<User> connections = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+        name = "user_following_companies",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "company_id")
+    )
+    private List<Company> followingCompanies = new ArrayList<>();
+
+
     @PrePersist
     public void prePersist() {
         setRole(UserRole.USER);

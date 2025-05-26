@@ -41,4 +41,7 @@ public class Company extends BaseUser {
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<User> recruiters = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "followingCompanies")
+    private List<User> followers = new ArrayList<>();
 }

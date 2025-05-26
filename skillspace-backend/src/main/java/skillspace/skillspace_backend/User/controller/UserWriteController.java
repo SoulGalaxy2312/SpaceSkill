@@ -7,12 +7,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import skillspace.skillspace_backend.User.request.AddEducationDTO;
 import skillspace.skillspace_backend.User.request.AddExperienceDTO;
+import skillspace.skillspace_backend.User.request.FollowRequestDTO;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
 import skillspace.skillspace_backend.User.service.UserWriteService;
 import skillspace.skillspace_backend.shared.constants.ApiPath;
 
 import java.util.UUID;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -83,6 +85,15 @@ public class UserWriteController {
         UserProfileDTO userProfileDTO = userWriteService.deleteSkill(userId, skill);
         log.info("Successfully delete skill {}", skill);
         return userProfileDTO;
+    }
+
+    /**
+     * Follow section
+     */
+    @PostMapping(ApiPath.USER + "follow")
+    @PreAuthorize("hasRole('USER')")
+    public void follow(@RequestBody FollowRequestDTO dto) {
+        userWriteService.follow(dto);
     }
     
 }

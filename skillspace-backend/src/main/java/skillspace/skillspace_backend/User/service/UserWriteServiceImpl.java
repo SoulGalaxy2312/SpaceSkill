@@ -9,6 +9,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import skillspace.skillspace_backend.Company.model.Company;
+import skillspace.skillspace_backend.Company.service.CompanyHelper;
 import skillspace.skillspace_backend.User.exception.DuplicateSkillException;
 import skillspace.skillspace_backend.User.mapper.UserMapper;
 import skillspace.skillspace_backend.User.model.Education;
@@ -17,6 +19,7 @@ import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.User.repository.UserRepository;
 import skillspace.skillspace_backend.User.request.AddEducationDTO;
 import skillspace.skillspace_backend.User.request.AddExperienceDTO;
+import skillspace.skillspace_backend.User.request.FollowRequestDTO;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
 import skillspace.skillspace_backend.shared.security.service.SecurityService;
 
@@ -28,17 +31,20 @@ public class UserWriteServiceImpl implements UserWriteService {
     private final UserHelper userHelper;
     private final UserProfileDTOLoadAndCacheService cacheService;
     private final SecurityService securityService;
+    private final CompanyHelper companyHelper;
 
     public UserWriteServiceImpl(
         UserRepository userRepository,
         UserHelper userHelper,
         UserProfileDTOLoadAndCacheService cacheService,
-        SecurityService securityService) {
+        SecurityService securityService,
+        CompanyHelper companyHelper) {
 
         this.cacheService = cacheService;
         this.userRepository = userRepository;
         this.userHelper = userHelper;
         this.securityService = securityService;
+        this.companyHelper = companyHelper;
     }
 
     /**
@@ -144,5 +150,43 @@ public class UserWriteServiceImpl implements UserWriteService {
         UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true);
         cacheService.writeHash(userId, profile);
         return profile;
+    }
+    
+    /**
+     * Follow section
+     */
+    @Transactional
+    public void follow(FollowRequestDTO dto) {
+        User user = securityService.getCurrentUser();
+        switch (dto.targetType()) {
+            case USER -> followUser(user, dto.targetId());
+            case COMPANY -> followCompany(user, dto.targetId());
+        }
+    }
+
+    private void followUser(User curUser, UUID targetId) {
+        User target = userHelper.getUserById(targetId);
+        if (curUser.getId().equals(target.getId())) {
+            throw new IllegalArgumentException("You cannot follow yourself");
+        }
+
+        List<User> connections = curUser.getConnections();
+        if (connections.contains(target)) {
+            throw new IllegalArgumentException("You have already followed this user");
+        }
+
+        connections.add(target);
+        target.getConnections().add(curUser);
+        userRepository.save(curUser);
+    }
+
+    private void followCompany(User curUser, UUID targetId) {
+        Company company = companyHelper.getCompany(targetId);
+        List<Company> followingCompanies = curUser.getFollowingCompanies();
+        if (followingCompanies.contains(company)) {
+            throw new IllegalArgumentException("You have already followed this user");
+        }
+        followingCompanies.add(company);
+        userRepository.save(curUser);
     }
 }
