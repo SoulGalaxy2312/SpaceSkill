@@ -24,5 +24,5 @@ public interface UserWriteService {
     UserProfileDTO deleteSkill(UUID userId, String skill) throws JsonProcessingException;
 
     // Follow section
-    void follow(FollowRequestDTO followRequestDTO);
+    void follow(FollowRequestDTO followRequestDTO) throws IllegalArgumentException;
 }

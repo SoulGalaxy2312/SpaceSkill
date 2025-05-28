@@ -156,7 +156,7 @@ public class UserWriteServiceImpl implements UserWriteService {
      * Follow section
      */
     @Transactional
-    public void follow(FollowRequestDTO dto) {
+    public void follow(FollowRequestDTO dto) throws IllegalArgumentException {
         User user = securityService.getCurrentUser();
         switch (dto.targetType()) {
             case USER -> followUser(user, dto.targetId());
@@ -164,7 +164,7 @@ public class UserWriteServiceImpl implements UserWriteService {
         }
     }
 
-    private void followUser(User curUser, UUID targetId) {
+    private void followUser(User curUser, UUID targetId) throws IllegalArgumentException {
         User target = userHelper.getUserById(targetId);
         if (curUser.getId().equals(target.getId())) {
             throw new IllegalArgumentException("You cannot follow yourself");
@@ -180,7 +180,7 @@ public class UserWriteServiceImpl implements UserWriteService {
         userRepository.save(curUser);
     }
 
-    private void followCompany(User curUser, UUID targetId) {
+    private void followCompany(User curUser, UUID targetId) throws IllegalArgumentException {
         Company company = companyHelper.getCompany(targetId);
         List<Company> followingCompanies = curUser.getFollowingCompanies();
         if (followingCompanies.contains(company)) {
