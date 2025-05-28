@@ -1,6 +1,7 @@
 package skillspace.skillspace_backend.Job.service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.security.access.AccessDeniedException;
@@ -15,6 +16,8 @@ import skillspace.skillspace_backend.Job.model.Job;
 import skillspace.skillspace_backend.Job.repository.JobRepository;
 import skillspace.skillspace_backend.Job.request.JobRequestDTO;
 import skillspace.skillspace_backend.Job.response.JobResponseDTO;
+import skillspace.skillspace_backend.Notification.service.NotificationWriteService;
+import skillspace.skillspace_backend.User.model.User;
 
 @Service
 @Slf4j
@@ -23,27 +26,30 @@ public class JobWriteServiceImpl implements JobWriteService {
     private final JobRepository jobRepository;
     private final CompanyHelper companyHelper;
     private final JobHelper jobHelper;
+    private final NotificationWriteService notificationWriteService;
 
-    public JobWriteServiceImpl(JobRepository jobRepository, CompanyHelper companyHelper, JobHelper jobHelper) {
+    public JobWriteServiceImpl(JobRepository jobRepository, CompanyHelper companyHelper, JobHelper jobHelper, NotificationWriteService notificationWriteService) {
         this.jobRepository = jobRepository;
         this.companyHelper = companyHelper;
         this.jobHelper = jobHelper;
+        this.notificationWriteService = notificationWriteService;
     }
 
     public JobResponseDTO createJob(JobRequestDTO createJobDTO) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Company company = companyHelper.getCompany(email);
-        
-        LocalDate createdAt = LocalDate.now();
+        List<User> followers = company.getFollowers();
 
+        LocalDate createdAt = LocalDate.now();
         Job job = new Job();
         job.setTitle(createJobDTO.title());
         job.setCompany(company);
         job.setRequiredSkills(createJobDTO.requiredSkills());
         job.setDescription(createJobDTO.description());
         job.setCreatedAt(createdAt);
-
+        
         JobResponseDTO response = JobMapper.toJobResponseDTO(jobRepository.save(job));
+        notificationWriteService.sendNotification(company, followers, job);
         return response;
     }
 
@@ -77,6 +83,5 @@ public class JobWriteServiceImpl implements JobWriteService {
         }
 
         jobRepository.delete(job);
-
     }
 }
