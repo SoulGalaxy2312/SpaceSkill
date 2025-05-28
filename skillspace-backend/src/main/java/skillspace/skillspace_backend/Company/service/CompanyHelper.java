@@ -22,7 +22,7 @@ public class CompanyHelper {
         return companyRepository.findById(companyId)
                 .orElseThrow(() -> {
                     log.warn("Company with id {} was not found", companyId);
-                    return new CompanyNotFoundException("Company with id" + companyId + " was not found");
+                    return new CompanyNotFoundException(companyId);
                 });
     }
 
@@ -30,7 +30,7 @@ public class CompanyHelper {
         return companyRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     log.warn("Company with email {} was not found", email);
-                    return new CompanyNotFoundException("Company with email " + email + " was not found");
+                    return new CompanyNotFoundException(email);
                 });
     }
 }
