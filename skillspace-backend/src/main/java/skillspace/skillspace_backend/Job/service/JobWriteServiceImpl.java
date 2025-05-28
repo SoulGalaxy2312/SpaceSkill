@@ -1,6 +1,7 @@
 package skillspace.skillspace_backend.Job.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,7 +39,7 @@ public class JobWriteServiceImpl implements JobWriteService {
     public JobResponseDTO createJob(JobRequestDTO createJobDTO) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Company company = companyHelper.getCompany(email);
-        List<User> followers = company.getFollowers();
+        List<User> followers = new ArrayList<>(company.getFollowers());
 
         LocalDate createdAt = LocalDate.now();
         Job job = new Job();

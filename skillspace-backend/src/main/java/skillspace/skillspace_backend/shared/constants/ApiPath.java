@@ -17,4 +17,7 @@ public class ApiPath {
 
     // Application APIs
     public static final String APPLICATION = API + "/application";
+
+    // Notification APIs
+    public static final String NOTIFICATION = API + "/notification";
 }

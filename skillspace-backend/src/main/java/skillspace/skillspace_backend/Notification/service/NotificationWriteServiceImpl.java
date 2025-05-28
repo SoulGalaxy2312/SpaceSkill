@@ -30,10 +30,15 @@ public class NotificationWriteServiceImpl implements NotificationWriteService {
         Notification notification = new Notification();
         String jobPostingTitle = getJobPostingTitle(sender.getProfileName(), job.getTitle());
         notification.setTitle(jobPostingTitle);
+
         notification.setSenderId(sender.getId());
+        notification.setSenderProfileName(sender.getProfileName());
         notification.setSenderRole(sender.getRole());
+
         notification.setRecipientId(recipient.getId());
         notification.setRecipientRole(recipient.getRole());
+        notification.setRecipientProfileName(recipient.getProfileName());
+        
         notification.setJob(job);
         notification.setRead(false);
 
@@ -43,14 +48,19 @@ public class NotificationWriteServiceImpl implements NotificationWriteService {
 
     @Async
     public void sendNotification(BaseUser sender, List<User> recipients, Job job) {
-        for (BaseUser recipient : recipients) {
+        for (User recipient : recipients) {
             Notification notification = new Notification();
             String jobPostingTitle = getJobPostingTitle(sender.getProfileName(), job.getTitle());
             notification.setTitle(jobPostingTitle);
+
             notification.setSenderId(sender.getId());
+            notification.setSenderProfileName(sender.getProfileName());
             notification.setSenderRole(sender.getRole());
+
             notification.setRecipientId(recipient.getId());
+            notification.setRecipientProfileName(recipient.getProfileName());
             notification.setRecipientRole(recipient.getRole());
+
             notification.setJob(job);
             notification.setRead(false);
 
