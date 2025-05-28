@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 import skillspace.skillspace_backend.Company.mapper.CompanyMapper;
 import skillspace.skillspace_backend.Company.model.Company;
 import skillspace.skillspace_backend.Company.response.CompanyProfileDTO;
-import skillspace.skillspace_backend.User.mapper.UserMapper;
 import skillspace.skillspace_backend.User.model.User;
-import skillspace.skillspace_backend.User.response.UserBriefDTO;
+import skillspace.skillspace_backend.shared.mapper.BaseUserMapper;
+import skillspace.skillspace_backend.shared.model.BaseUserBrief;
 import skillspace.skillspace_backend.shared.security.service.SecurityService;
 
 @Service
@@ -30,13 +30,13 @@ public class CompanyReadServiceImpl implements CompanyReadService {
         return CompanyMapper.toCompanyProfileDTO(company, isCurrentCompany);
     }
 
-    public List<UserBriefDTO> getRecruiters(UUID companyId) {
+    public List<BaseUserBrief> getRecruiters(UUID companyId) {
         boolean isCurrentCompany = securityService.assertCurrentUserMatches(companyId);
         if (!isCurrentCompany) return null;
         Company company = companyHelper.getCompany(companyId);
         List<User> recruiters = company.getRecruiters();
-        List<UserBriefDTO> response = recruiters.stream()
-                                            .map(UserMapper::toUserBriefDTO)
+        List<BaseUserBrief> response = recruiters.stream()
+                                            .map(BaseUserMapper::toBaseUserBrief)
                                             .collect(Collectors.toList());
         return response;
     }

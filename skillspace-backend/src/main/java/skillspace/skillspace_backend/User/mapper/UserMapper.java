@@ -3,7 +3,6 @@ package skillspace.skillspace_backend.User.mapper;
 import java.util.stream.Collectors;
 
 import skillspace.skillspace_backend.User.model.User;
-import skillspace.skillspace_backend.User.response.UserBriefDTO;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
 
 public class UserMapper {
@@ -22,12 +21,5 @@ public class UserMapper {
                                 .map(EducationMapper::toEducationDTO)
                                 .collect(Collectors.toList()),
             isCurrentUser);
-    }
-
-    public static UserBriefDTO toUserBriefDTO(User user) {
-        return new UserBriefDTO(
-            user.getId(),
-            user.getProfileName()
-        );
     }
 }

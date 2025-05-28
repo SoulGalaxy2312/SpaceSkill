@@ -4,8 +4,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import skillspace.skillspace_backend.Company.response.CompanyProfileDTO;
 import skillspace.skillspace_backend.Company.service.CompanyReadService;
-import skillspace.skillspace_backend.User.response.UserBriefDTO;
 import skillspace.skillspace_backend.shared.constants.ApiPath;
+import skillspace.skillspace_backend.shared.model.BaseUserBrief;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,7 +28,7 @@ public class CompanyReadController {
     }
 
     @GetMapping(ApiPath.COMPANY + "/{companyId}/getRecruiters")
-    public List<UserBriefDTO> getRecruiters(@PathVariable UUID companyId) {
+    public List<BaseUserBrief> getRecruiters(@PathVariable UUID companyId) {
         return companyReadService.getRecruiters(companyId);
     }
     
