@@ -90,7 +90,7 @@ public class UserWriteController {
     /**
      * Follow section
      */
-    @PostMapping(ApiPath.USER + "follow")
+    @PostMapping(ApiPath.USER + "/follow")
     @PreAuthorize("hasRole('USER')")
     public void follow(@RequestBody FollowRequestDTO dto) {
         userWriteService.follow(dto);
