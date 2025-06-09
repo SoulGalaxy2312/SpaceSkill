@@ -19,6 +19,7 @@ import skillspace.skillspace_backend.Job.request.JobRequestDTO;
 import skillspace.skillspace_backend.Job.response.JobResponseDTO;
 import skillspace.skillspace_backend.Notification.service.NotificationWriteService;
 import skillspace.skillspace_backend.User.model.User;
+import skillspace.skillspace_backend.shared.response.StatusResponseDTO;
 
 @Service
 @Slf4j
@@ -73,7 +74,7 @@ public class JobWriteServiceImpl implements JobWriteService {
         return JobMapper.toJobResponseDTO(savedJob);
     }
 
-    public void deleteJob(UUID jobId) throws AccessDeniedException {
+    public StatusResponseDTO deleteJob(UUID jobId) throws AccessDeniedException {
         Job job = jobHelper.getJob(jobId);
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Company company = companyHelper.getCompany(email);
@@ -84,5 +85,6 @@ public class JobWriteServiceImpl implements JobWriteService {
         }
 
         jobRepository.delete(job);
+        return new StatusResponseDTO(true, "Job deleted successfully");
     }
 }

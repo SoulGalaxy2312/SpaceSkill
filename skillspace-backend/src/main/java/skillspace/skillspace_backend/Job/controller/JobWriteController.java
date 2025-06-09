@@ -6,6 +6,7 @@ import skillspace.skillspace_backend.Job.request.JobRequestDTO;
 import skillspace.skillspace_backend.Job.response.JobResponseDTO;
 import skillspace.skillspace_backend.Job.service.JobWriteService;
 import skillspace.skillspace_backend.shared.constants.ApiPath;
+import skillspace.skillspace_backend.shared.response.StatusResponseDTO;
 
 import java.util.UUID;
 
@@ -39,7 +40,7 @@ public class JobWriteController {
 
     @DeleteMapping(ApiPath.JOB + "/{jobId}/deleteJob")
     @PreAuthorize("hasRole('COMPANY')") 
-    public void deleteJob(@PathVariable UUID jobId) {
-        jobWriteService.deleteJob(jobId);
+    public StatusResponseDTO deleteJob(@PathVariable UUID jobId) {
+        return jobWriteService.deleteJob(jobId);
     }
 }
