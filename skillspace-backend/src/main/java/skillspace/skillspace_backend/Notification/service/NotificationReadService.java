@@ -5,5 +5,5 @@ import org.springframework.data.domain.Page;
 import skillspace.skillspace_backend.Notification.response.NotificationResponseDTO;
 
 public interface NotificationReadService {
-    Page<NotificationResponseDTO> getNotifications(int page) throws IllegalArgumentException;
+    Page<NotificationResponseDTO> getNotifications(int page, int size) throws IllegalArgumentException;
 }

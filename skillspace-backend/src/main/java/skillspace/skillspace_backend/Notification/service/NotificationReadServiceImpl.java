@@ -24,9 +24,9 @@ public class NotificationReadServiceImpl implements NotificationReadService {
         this.securityService = securityService;
     }
     
-    public Page<NotificationResponseDTO> getNotifications(int page) throws IllegalArgumentException {
+    public Page<NotificationResponseDTO> getNotifications(int page, int size) throws IllegalArgumentException {
         User user = securityService.getCurrentUser();
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         if (page < 0 || page >= pageable.getPageSize()) {
             throw new IllegalArgumentException("The page is not accepted");
         }
