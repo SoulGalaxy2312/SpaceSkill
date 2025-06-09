@@ -3,6 +3,7 @@ package skillspace.skillspace_backend.User.service;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -21,6 +22,7 @@ import skillspace.skillspace_backend.User.request.AddEducationDTO;
 import skillspace.skillspace_backend.User.request.AddExperienceDTO;
 import skillspace.skillspace_backend.User.request.FollowRequestDTO;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
+import skillspace.skillspace_backend.shared.response.StatusResponseDTO;
 import skillspace.skillspace_backend.shared.security.service.SecurityService;
 
 @Service
@@ -51,9 +53,12 @@ public class UserWriteServiceImpl implements UserWriteService {
      * Experience section
      */
     @Transactional
-    public UserProfileDTO addExperience(UUID userId, AddExperienceDTO dto) throws JsonProcessingException {
+    public UserProfileDTO addExperience(UUID userId, AddExperienceDTO dto) throws JsonProcessingException, AccessDeniedException {
         boolean isCurrentUser = securityService.assertCurrentUserMatches(userId);
-        if (!isCurrentUser) return null;
+        if (!isCurrentUser) {
+            log.warn("Current user is not authorized to add experience for user {}", userId);
+            throw new AccessDeniedException("You are not authorized to add experience for this user");
+        };
 
         User user = userHelper.getUserById(userId);
         Experience entity = new Experience();
@@ -70,9 +75,12 @@ public class UserWriteServiceImpl implements UserWriteService {
     }
 
     @Transactional
-    public UserProfileDTO deleteExperience(UUID userId, UUID experienceId) throws JsonProcessingException {
+    public UserProfileDTO deleteExperience(UUID userId, UUID experienceId) throws JsonProcessingException, AccessDeniedException {
         boolean isCurrentUser = securityService.assertCurrentUserMatches(userId);
-        if (!isCurrentUser) return null;
+        if (!isCurrentUser) {
+            log.warn("Current user is not authorized to delete experience for user {}", userId);
+            throw new AccessDeniedException("You are not authorized to delete experience for this user");
+        };
 
         User user = userHelper.getUserById(userId);
         List<Experience> experiences = user.getExperiences();
@@ -88,9 +96,12 @@ public class UserWriteServiceImpl implements UserWriteService {
      * Education section
      */
     @Transactional
-    public UserProfileDTO addEducation(UUID userId, AddEducationDTO educationDTO) throws JsonProcessingException {
+    public UserProfileDTO addEducation(UUID userId, AddEducationDTO educationDTO) throws JsonProcessingException, AccessDeniedException {
         boolean isCurrentUser = securityService.assertCurrentUserMatches(userId);
-        if (!isCurrentUser) return null;
+        if (!isCurrentUser) {
+            log.warn("Current user is not authorized to add education for user {}", userId);
+            throw new AccessDeniedException("You are not authorized to add education for this user");
+        };
         
         User user = userHelper.getUserById(userId);
         Education entity = new Education();
@@ -107,9 +118,13 @@ public class UserWriteServiceImpl implements UserWriteService {
     }
 
     @Transactional
-    public UserProfileDTO deleteEducation(UUID userId, UUID educationId) throws JsonProcessingException {
+    public UserProfileDTO deleteEducation(UUID userId, UUID educationId) throws JsonProcessingException, AccessDeniedException {
+        
         boolean isCurrentUser = securityService.assertCurrentUserMatches(userId);
-        if (!isCurrentUser) return null;
+        if (!isCurrentUser) {
+            log.warn("Current user is not authorized to delete education for user {}", userId);
+            throw new AccessDeniedException("You are not authorized to delete education for this user");
+        };
 
         User user = userHelper.getUserById(userId);
         List<Education> educations = user.getEducations();
@@ -125,9 +140,12 @@ public class UserWriteServiceImpl implements UserWriteService {
      * Skill section
      */
 
-    public UserProfileDTO addSkill(UUID userId, String skill) throws DuplicateSkillException, JsonProcessingException {
+    public UserProfileDTO addSkill(UUID userId, String skill) throws DuplicateSkillException, JsonProcessingException, AccessDeniedException {
         boolean isCurrentUser = securityService.assertCurrentUserMatches(userId);
-        if (!isCurrentUser) return null;
+        if (!isCurrentUser) {
+            log.warn("Current user is not authorized to add skill for user {}", userId);
+            throw new AccessDeniedException("You are not authorized to add skill for this user");
+        };
 
         User user = userHelper.getUserById(userId);
         List<String> skills = user.getSkills();
@@ -141,9 +159,12 @@ public class UserWriteServiceImpl implements UserWriteService {
         return profile;
     }
 
-    public UserProfileDTO deleteSkill(UUID userId, String skill) throws JsonProcessingException {
+    public UserProfileDTO deleteSkill(UUID userId, String skill) throws JsonProcessingException, AccessDeniedException {
         boolean isCurrentUser = securityService.assertCurrentUserMatches(userId);
-        if (!isCurrentUser) return null;
+        if (!isCurrentUser) {
+            log.warn("Current user is not authorized to delete skill for user {}", userId);
+            throw new AccessDeniedException("You are not authorized to delete skill for this user");
+        };
 
         User user = userHelper.getUserById(userId);
         user.getSkills().remove(skill);
@@ -156,15 +177,16 @@ public class UserWriteServiceImpl implements UserWriteService {
      * Follow section
      */
     @Transactional
-    public void follow(FollowRequestDTO dto) throws IllegalArgumentException {
+    public StatusResponseDTO follow(FollowRequestDTO dto) throws IllegalArgumentException {
         User user = securityService.getCurrentUser();
-        switch (dto.targetType()) {
+        return switch (dto.targetType()) {
             case USER -> followUser(user, dto.targetId());
             case COMPANY -> followCompany(user, dto.targetId());
-        }
+            default -> throw new IllegalArgumentException("Invalid target type: " + dto.targetType());
+        };
     }
 
-    private void followUser(User curUser, UUID targetId) throws IllegalArgumentException {
+    private StatusResponseDTO followUser(User curUser, UUID targetId) throws IllegalArgumentException {
         User target = userHelper.getUserById(targetId);
         if (curUser.getId().equals(target.getId())) {
             throw new IllegalArgumentException("You cannot follow yourself");
@@ -178,9 +200,10 @@ public class UserWriteServiceImpl implements UserWriteService {
         connections.add(target);
         target.getConnections().add(curUser);
         userRepository.save(curUser);
+        return new StatusResponseDTO(true, "Followed user successfully");
     }
 
-    private void followCompany(User curUser, UUID targetId) throws IllegalArgumentException {
+    private StatusResponseDTO followCompany(User curUser, UUID targetId) throws IllegalArgumentException {
         Company company = companyHelper.getCompany(targetId);
         List<Company> followingCompanies = curUser.getFollowingCompanies();
         if (followingCompanies.contains(company)) {
@@ -188,5 +211,6 @@ public class UserWriteServiceImpl implements UserWriteService {
         }
         followingCompanies.add(company);
         userRepository.save(curUser);
+        return new StatusResponseDTO(true, "Followed company successfully");
     }
 }
