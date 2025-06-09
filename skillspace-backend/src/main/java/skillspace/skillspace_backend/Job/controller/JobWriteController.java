@@ -26,19 +26,19 @@ public class JobWriteController {
         this.jobWriteService = jobWriteService;
     }
     
-    @PostMapping(ApiPath.JOB + "/createJob")
+    @PostMapping(ApiPath.JOB)
     @PreAuthorize("hasRole('COMPANY')")
     public JobResponseDTO createJob(@RequestBody JobRequestDTO dto) {
         return jobWriteService.createJob(dto);
     }
     
-    @PatchMapping(ApiPath.JOB + "/{jobId}/updateJob")
+    @PatchMapping(ApiPath.JOB + "/{jobId}")
     @PreAuthorize("hasRole('COMPANY')")
     public JobResponseDTO updateJob(@PathVariable UUID jobId, @RequestBody JobRequestDTO dto) {
         return jobWriteService.updateJob(jobId, dto);
     }
 
-    @DeleteMapping(ApiPath.JOB + "/{jobId}/deleteJob")
+    @DeleteMapping(ApiPath.JOB + "/{jobId}")
     @PreAuthorize("hasRole('COMPANY')") 
     public StatusResponseDTO deleteJob(@PathVariable UUID jobId) {
         return jobWriteService.deleteJob(jobId);

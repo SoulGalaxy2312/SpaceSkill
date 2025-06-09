@@ -4,20 +4,20 @@ public class ApiPath {
     public static final String API = "/api/v1";
 
     // Auth APIs
-    public static final String AUTH = API + "/auth";
+    public static final String AUTH = API + "/auths";
 
     // User APIs
-    public static final String USER = API + "/user";
+    public static final String USER = API + "/users";
 
     // Company APIs
-    public static final String COMPANY = API + "/company";
+    public static final String COMPANY = API + "/companies";
 
     // Job APIs
-    public static final String JOB =  API + "/job";
+    public static final String JOB =  API + "/jobs";
 
     // Application APIs
-    public static final String APPLICATION = API + "/application";
+    public static final String APPLICATION = API + "/applications";
 
     // Notification APIs
-    public static final String NOTIFICATION = API + "/notification";
+    public static final String NOTIFICATION = API + "/notifications";
 }

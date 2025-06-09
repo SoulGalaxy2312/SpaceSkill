@@ -27,13 +27,13 @@ public class ApplicationWriteController {
         this.applicationWriteService = applicationWriteService;
     }
     
-    @PostMapping(ApiPath.APPLICATION + "/{jobId}/applyJob")
+    @PostMapping(ApiPath.APPLICATION + "/{jobId}")
     @PreAuthorize("hasRole('USER')")
     public ApplicationResponseDTO applyJob(@PathVariable UUID jobId, @RequestBody ApplicationRequestDTO requestDTO) {
         return applicationWriteService.applyJob(jobId, requestDTO);    
     }
     
-    @PatchMapping(ApiPath.APPLICATION + "/{applicationId}/processApplication")
+    @PatchMapping(ApiPath.APPLICATION + "/{applicationId}")
     @PreAuthorize("isAuthenticated()")
     public ApplicationResponseDTO processApplication(@PathVariable UUID applicationId, @RequestBody ProcessApplicationRequestDTO dto) {
         log.debug("Attempting to process application with id {}", applicationId);
