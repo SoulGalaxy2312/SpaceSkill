@@ -10,8 +10,10 @@ import skillspace.skillspace_backend.shared.model.BaseUserBrief;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -27,9 +29,14 @@ public class CompanyReadController {
         return companyReadService.getCompanyProfile(companyId);
     }
 
-    @GetMapping(ApiPath.COMPANY + "/{companyId}/getRecruiters")
-    public List<BaseUserBrief> getRecruiters(@PathVariable UUID companyId) {
-        return companyReadService.getRecruiters(companyId);
+    @GetMapping(ApiPath.COMPANY + "/{companyId}/recruiters")
+    @PreAuthorize("hasRole('COMPANY')")
+    public List<BaseUserBrief> getRecruiters(
+        @PathVariable(required = true) UUID companyId,
+        @RequestParam(required = false, defaultValue = "0") int page,
+        @RequestParam(required = false, defaultValue = "10") int size) {
+
+        return companyReadService.getRecruiters(companyId, page, size);
     }
     
 }
