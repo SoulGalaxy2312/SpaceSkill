@@ -4,8 +4,12 @@ import java.time.LocalDate;
 import java.util.Set;
 import java.util.UUID;
 
+import skillspace.skillspace_backend.shared.model.BaseUserBrief;
+
 public record JobResponseDTO (
     UUID id,
+    BaseUserBrief company,
+    String location,
     String title,
     Set<String> requiredSkills,
     String description,

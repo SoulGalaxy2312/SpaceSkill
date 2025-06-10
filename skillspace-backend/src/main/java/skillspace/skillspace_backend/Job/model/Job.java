@@ -45,6 +45,8 @@ public class Job {
 
     private LocalDate createdAt;
 
+    private String location;
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDate.now();

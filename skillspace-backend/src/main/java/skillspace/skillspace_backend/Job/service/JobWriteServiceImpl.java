@@ -49,7 +49,8 @@ public class JobWriteServiceImpl implements JobWriteService {
         job.setRequiredSkills(createJobDTO.requiredSkills());
         job.setDescription(createJobDTO.description());
         job.setCreatedAt(createdAt);
-        
+        job.setLocation(company.getLocation());
+
         JobResponseDTO response = JobMapper.toJobResponseDTO(jobRepository.save(job));
         notificationWriteService.sendNotification(company, followers, job);
         return response;
