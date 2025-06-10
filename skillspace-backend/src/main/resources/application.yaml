@@ -27,3 +27,6 @@ logging:
                     descriptor:
                         sql:
                             BasicBinder: OFF
+spring.flyway:
+    enabled: true
+    locations: classpath:db/migration
