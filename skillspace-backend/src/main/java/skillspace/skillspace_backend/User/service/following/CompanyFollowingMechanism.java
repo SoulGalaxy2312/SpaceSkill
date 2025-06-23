@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import skillspace.skillspace_backend.Company.model.Company;
 import skillspace.skillspace_backend.Company.repository.CompanyRepository;
-import skillspace.skillspace_backend.Company.service.CompanyHelper;
 import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.User.repository.UserRepository;
 import skillspace.skillspace_backend.shared.enums.UserRole;
@@ -17,19 +16,17 @@ import skillspace.skillspace_backend.shared.response.StatusResponseDTO;
 @Service
 public class CompanyFollowingMechanism implements IFollowingMechanism {
     
-    private final CompanyHelper companyHelper;
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
     
-    public CompanyFollowingMechanism(CompanyHelper companyHelper, UserRepository userRepository, CompanyRepository companyRepository) {
-        this.companyHelper = companyHelper;
+    public CompanyFollowingMechanism(UserRepository userRepository, CompanyRepository companyRepository) {
         this.userRepository = userRepository;
         this.companyRepository = companyRepository;
     }
 
     @Override
     public StatusResponseDTO follow(User follower, UUID targetId) {
-        Company targetCompany = companyHelper.getCompany(targetId);
+        Company targetCompany = companyRepository.getCompanyByIdOrThrow(targetId);
         if (targetCompany == null) {
             throw new NotFoundException("Company not found with ID: " + targetId);
         }
@@ -49,7 +46,7 @@ public class CompanyFollowingMechanism implements IFollowingMechanism {
 
     @Override
     public StatusResponseDTO unfollow(User follower, UUID targetId) {
-        Company targetCompany = companyHelper.getCompany(targetId);
+        Company targetCompany = companyRepository.getCompanyByIdOrThrow(targetId);
         if (targetCompany == null) {
             throw new NotFoundException("Company not found with ID: " + targetId);
         }

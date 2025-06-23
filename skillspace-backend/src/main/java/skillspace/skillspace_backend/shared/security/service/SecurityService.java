@@ -8,7 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import skillspace.skillspace_backend.Company.model.Company;
-import skillspace.skillspace_backend.Company.service.CompanyHelper;
+import skillspace.skillspace_backend.Company.repository.CompanyRepository;
 import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.User.repository.UserRepository;
 import skillspace.skillspace_backend.shared.model.BaseUser;
@@ -16,11 +16,11 @@ import skillspace.skillspace_backend.shared.model.BaseUser;
 @Service
 public class SecurityService {
     private final UserRepository userRepository;
-    private final CompanyHelper companyHelper;
+    private final CompanyRepository companyRepository;
 
-    public SecurityService(UserRepository userRepository, CompanyHelper companyHelper) {
+    public SecurityService(UserRepository userRepository, CompanyRepository companyRepository) {
         this.userRepository = userRepository;
-        this.companyHelper = companyHelper;
+        this.companyRepository = companyRepository;
     }
 
     private String getAuthenticationEmail() {
@@ -38,7 +38,7 @@ public class SecurityService {
 
     public Company getCurrentCompany() {
         String email = getAuthenticationEmail();
-        return companyHelper.getCompany(email);
+        return companyRepository.getCompanyByEmailOrThrow(email);
     }
 
     public BaseUser getCurrentBaseUser() {
@@ -49,7 +49,7 @@ public class SecurityService {
 
         String email = getAuthenticationEmail();
         if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_COMPANY"))) {
-            return companyHelper.getCompany(email); // returns Company, which extends BaseUser
+            return companyRepository.getCompanyByEmailOrThrow(email); // returns Company, which extends BaseUser
         } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
             return userRepository.getUserByEmailOrThrow(email); // returns User, which extends BaseUser
         }

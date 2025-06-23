@@ -9,7 +9,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import skillspace.skillspace_backend.Company.service.CompanyHelper;
 import skillspace.skillspace_backend.User.exception.DuplicateSkillException;
 import skillspace.skillspace_backend.User.mapper.UserMapper;
 import skillspace.skillspace_backend.User.model.Education;
@@ -39,12 +38,11 @@ public class UserWriteServiceImpl implements UserWriteService {
         UserRepository userRepository,
         UserProfileDTOLoadAndCacheService cacheService,
         SecurityService securityService,
-        CompanyHelper companyHelper,
         FollowingStrategyFactory followingStrategyFactory
         ) {
-
-        this.cacheService = cacheService;
+        
         this.userRepository = userRepository;
+        this.cacheService = cacheService;
         this.securityService = securityService;
         this.followingStrategyFactory = followingStrategyFactory;
     }

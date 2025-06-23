@@ -21,17 +21,14 @@ import skillspace.skillspace_backend.shared.security.service.SecurityService;
 @Slf4j
 public class CompanyWriteServiceImpl implements CompanyWriteService {
     private final CompanyRepository companyRepository;
-    private final CompanyHelper companyHelper;
     private final SecurityService securityService;
     private final UserRepository userRepository;
 
     public CompanyWriteServiceImpl(
         CompanyRepository companyRepository, 
-        CompanyHelper companyHelper,
         SecurityService securityService,
         UserRepository userRepository) {
 
-        this.companyHelper = companyHelper;
         this.companyRepository = companyRepository;
         this.securityService = securityService;
         this.userRepository = userRepository;
@@ -44,7 +41,7 @@ public class CompanyWriteServiceImpl implements CompanyWriteService {
             throw new AccessDeniedException("You are not authorized to update this company's profile");
         };
 
-        Company company = companyHelper.getCompany(companyId);
+        Company company = companyRepository.getCompanyByIdOrThrow(companyId);
         if (dto.profileName() != null) company.setProfileName(dto.profileName());
         if (dto.location() != null) company.setLocation(dto.location());
         if (dto.about() != null) company.setAbout(dto.about());

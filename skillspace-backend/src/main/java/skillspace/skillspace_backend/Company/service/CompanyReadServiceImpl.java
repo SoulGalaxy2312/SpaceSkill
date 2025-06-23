@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import skillspace.skillspace_backend.Company.mapper.CompanyMapper;
 import skillspace.skillspace_backend.Company.model.Company;
+import skillspace.skillspace_backend.Company.repository.CompanyRepository;
 import skillspace.skillspace_backend.Company.response.CompanyProfileDTO;
 import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.shared.mapper.BaseUserMapper;
@@ -19,17 +20,17 @@ import skillspace.skillspace_backend.shared.security.service.SecurityService;
 @Service
 @Slf4j
 public class CompanyReadServiceImpl implements CompanyReadService {
-    private final CompanyHelper companyHelper;
+    private final CompanyRepository companyRepository;
     private final SecurityService securityService;
 
-    public CompanyReadServiceImpl(CompanyHelper companyHelper, SecurityService securityService) {
-        this.companyHelper = companyHelper;
+    public CompanyReadServiceImpl(CompanyRepository companyRepository, SecurityService securityService) {
+        this.companyRepository = companyRepository;
         this.securityService = securityService;
     }
 
     public CompanyProfileDTO getCompanyProfile(UUID companyId) {
         boolean isCurrentCompany = securityService.assertCurrentUserMatches(companyId);
-        Company company = companyHelper.getCompany(companyId);
+        Company company = companyRepository.getCompanyByIdOrThrow(companyId);
         return CompanyMapper.toCompanyProfileDTO(company, isCurrentCompany);
     }
 
@@ -40,7 +41,7 @@ public class CompanyReadServiceImpl implements CompanyReadService {
             throw new AccessDeniedException("You are not authorized to view recruiters for this company");
         };
 
-        Company company = companyHelper.getCompany(companyId);
+        Company company = companyRepository.getCompanyByIdOrThrow(companyId);
         List<User> recruiters = company.getRecruiters();
         List<BaseUserBrief> allBriefs = recruiters.stream()
                                             .map(BaseUserMapper::toBaseUserBrief)

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import skillspace.skillspace_backend.Company.model.Company;
-import skillspace.skillspace_backend.Company.service.CompanyHelper;
+import skillspace.skillspace_backend.Company.repository.CompanyRepository;
 import skillspace.skillspace_backend.Job.mapper.JobMapper;
 import skillspace.skillspace_backend.Job.model.Job;
 import skillspace.skillspace_backend.Job.repository.JobRepository;
@@ -26,20 +26,20 @@ import skillspace.skillspace_backend.shared.response.StatusResponseDTO;
 public class JobWriteServiceImpl implements JobWriteService {
 
     private final JobRepository jobRepository;
-    private final CompanyHelper companyHelper;
+    private final CompanyRepository companyRepository;
     private final JobHelper jobHelper;
     private final NotificationWriteService notificationWriteService;
 
-    public JobWriteServiceImpl(JobRepository jobRepository, CompanyHelper companyHelper, JobHelper jobHelper, NotificationWriteService notificationWriteService) {
+    public JobWriteServiceImpl(JobRepository jobRepository, CompanyRepository companyRepository, JobHelper jobHelper, NotificationWriteService notificationWriteService) {
         this.jobRepository = jobRepository;
-        this.companyHelper = companyHelper;
+        this.companyRepository = companyRepository;
         this.jobHelper = jobHelper;
         this.notificationWriteService = notificationWriteService;
     }
 
     public JobResponseDTO createJob(JobRequestDTO createJobDTO) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Company company = companyHelper.getCompany(email);
+        Company company = companyRepository.getCompanyByEmailOrThrow(email);
         List<User> followers = new ArrayList<>(company.getFollowers());
 
         LocalDate createdAt = LocalDate.now();
@@ -59,7 +59,7 @@ public class JobWriteServiceImpl implements JobWriteService {
     public JobResponseDTO updateJob(UUID jobId, JobRequestDTO jobRequestDTO) throws AccessDeniedException {  
         Job job = jobHelper.getJob(jobId);
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Company company = companyHelper.getCompany(email);
+        Company company = companyRepository.getCompanyByEmailOrThrow(email);
 
         if (!job.getCompany().getId().equals(company.getId())) {
             log.warn("Current company is not authorized to update this job");
@@ -78,7 +78,7 @@ public class JobWriteServiceImpl implements JobWriteService {
     public StatusResponseDTO deleteJob(UUID jobId) throws AccessDeniedException {
         Job job = jobHelper.getJob(jobId);
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Company company = companyHelper.getCompany(email);
+        Company company = companyRepository.getCompanyByEmailOrThrow(email);
 
         if (!job.getCompany().getId().equals(company.getId())) {
             log.warn("Current company is not authorized to update this job");
