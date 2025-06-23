@@ -1,13 +1,9 @@
 package skillspace.skillspace_backend.Company.response;
 
-import java.util.UUID;
+import skillspace.skillspace_backend.shared.response.BaseUserProfileDTO;
 
 public record CompanyProfileDTO(
-    UUID id,
-    String profileName,
-    String location,
-    String about,
-    boolean isCurrentCompany
+    BaseUserProfileDTO baseUserProfileInformation
 ) {
     
 }

@@ -1,16 +1,13 @@
 package skillspace.skillspace_backend.User.response;
 
 import java.util.List;
-import java.util.UUID;
+
+import skillspace.skillspace_backend.shared.response.BaseUserProfileDTO;
 
 public record UserProfileDTO(
-    UUID id,
-    String profileName,
-    String location,
-    String about,
+    BaseUserProfileDTO baseUserProfileInformation,
     List<String> skills,
     List<ExperienceDTO> experiences,
-    List<EducationDTO> educations,
-    boolean isCurrentUser
+    List<EducationDTO> educations
 ) {
 }
