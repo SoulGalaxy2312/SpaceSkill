@@ -5,12 +5,11 @@ import java.util.UUID;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-
+import skillspace.skillspace_backend.Application.repository.ApplicationRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import skillspace.skillspace_backend.Company.model.Company;
 import skillspace.skillspace_backend.Company.service.CompanyHelper;
 import skillspace.skillspace_backend.User.exception.DuplicateSkillException;
 import skillspace.skillspace_backend.User.mapper.UserMapper;
@@ -22,6 +21,8 @@ import skillspace.skillspace_backend.User.request.AddEducationDTO;
 import skillspace.skillspace_backend.User.request.AddExperienceDTO;
 import skillspace.skillspace_backend.User.request.FollowRequestDTO;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
+import skillspace.skillspace_backend.User.service.following.FollowingStrategyFactory;
+import skillspace.skillspace_backend.User.service.following.IFollowingMechanism;
 import skillspace.skillspace_backend.shared.response.StatusResponseDTO;
 import skillspace.skillspace_backend.shared.security.service.SecurityService;
 
@@ -29,24 +30,28 @@ import skillspace.skillspace_backend.shared.security.service.SecurityService;
 @Slf4j
 public class UserWriteServiceImpl implements UserWriteService {
 
+
     private final UserRepository userRepository;
     private final UserHelper userHelper;
     private final UserProfileDTOLoadAndCacheService cacheService;
     private final SecurityService securityService;
-    private final CompanyHelper companyHelper;
+    private final FollowingStrategyFactory followingStrategyFactory;
 
     public UserWriteServiceImpl(
         UserRepository userRepository,
         UserHelper userHelper,
         UserProfileDTOLoadAndCacheService cacheService,
         SecurityService securityService,
-        CompanyHelper companyHelper) {
+        CompanyHelper companyHelper,
+        ApplicationRepository applicationRepository,
+        FollowingStrategyFactory followingStrategyFactory
+        ) {
 
         this.cacheService = cacheService;
         this.userRepository = userRepository;
         this.userHelper = userHelper;
         this.securityService = securityService;
-        this.companyHelper = companyHelper;
+        this.followingStrategyFactory = followingStrategyFactory;
     }
 
     /**
@@ -179,38 +184,7 @@ public class UserWriteServiceImpl implements UserWriteService {
     @Transactional
     public StatusResponseDTO follow(FollowRequestDTO dto) throws IllegalArgumentException {
         User user = securityService.getCurrentUser();
-        return switch (dto.targetType()) {
-            case USER -> followUser(user, dto.targetId());
-            case COMPANY -> followCompany(user, dto.targetId());
-            default -> throw new IllegalArgumentException("Invalid target type: " + dto.targetType());
-        };
-    }
-
-    private StatusResponseDTO followUser(User curUser, UUID targetId) throws IllegalArgumentException {
-        User target = userHelper.getUserById(targetId);
-        if (curUser.getId().equals(target.getId())) {
-            throw new IllegalArgumentException("You cannot follow yourself");
-        }
-
-        List<User> connections = curUser.getConnections();
-        if (connections.contains(target)) {
-            throw new IllegalArgumentException("You have already followed this user");
-        }
-
-        connections.add(target);
-        target.getConnections().add(curUser);
-        userRepository.save(curUser);
-        return new StatusResponseDTO(true, "Followed user successfully");
-    }
-
-    private StatusResponseDTO followCompany(User curUser, UUID targetId) throws IllegalArgumentException {
-        Company company = companyHelper.getCompany(targetId);
-        List<Company> followingCompanies = curUser.getFollowingCompanies();
-        if (followingCompanies.contains(company)) {
-            throw new IllegalArgumentException("You have already followed this user");
-        }
-        followingCompanies.add(company);
-        userRepository.save(curUser);
-        return new StatusResponseDTO(true, "Followed company successfully");
+        IFollowingMechanism mechanism = followingStrategyFactory.getStrategy(dto.targetType());
+        return mechanism.follow(user, dto.targetId());
     }
 }

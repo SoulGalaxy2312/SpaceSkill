@@ -11,6 +11,7 @@ import skillspace.skillspace_backend.User.request.FollowRequestDTO;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
 import skillspace.skillspace_backend.User.service.UserWriteService;
 import skillspace.skillspace_backend.shared.constants.ApiPath;
+import skillspace.skillspace_backend.shared.response.StatusResponseDTO;
 
 import java.util.UUID;
 
@@ -92,8 +93,8 @@ public class UserWriteController {
      */
     @PostMapping(ApiPath.USER + "/follow")
     @PreAuthorize("hasRole('USER')")
-    public void follow(@RequestBody FollowRequestDTO dto) {
-        userWriteService.follow(dto);
+    public StatusResponseDTO follow(@RequestBody FollowRequestDTO dto) {
+        return userWriteService.follow(dto);
     }
     
 }
