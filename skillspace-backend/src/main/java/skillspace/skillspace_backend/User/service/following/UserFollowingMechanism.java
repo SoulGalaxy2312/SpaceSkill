@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.User.repository.UserRepository;
-import skillspace.skillspace_backend.User.service.UserHelper;
 import skillspace.skillspace_backend.shared.enums.UserRole;
 import skillspace.skillspace_backend.shared.response.StatusResponseDTO;
 
@@ -16,11 +15,9 @@ import skillspace.skillspace_backend.shared.response.StatusResponseDTO;
 @Slf4j
 public class UserFollowingMechanism implements IFollowingMechanism {
 
-    private final UserHelper userHelper;
     private final UserRepository userRepository;
 
-    public UserFollowingMechanism(UserHelper userHelper, UserRepository userRepository) {
-        this.userHelper = userHelper;
+    public UserFollowingMechanism(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -28,7 +25,7 @@ public class UserFollowingMechanism implements IFollowingMechanism {
     public StatusResponseDTO follow(User follower, UUID targetId) {
         log.info("User {} is trying to follow user {}", follower.getId(), targetId);
 
-        User target = userHelper.getUserById(targetId);
+        User target = userRepository.getUserByIdOrThrow(targetId);
         if (follower.getId().equals(target.getId())) {
             throw new IllegalArgumentException("You cannot follow yourself");
         }
@@ -46,7 +43,7 @@ public class UserFollowingMechanism implements IFollowingMechanism {
 
     @Override
     public StatusResponseDTO unfollow(User follower, UUID targetId) {
-        User target = userHelper.getUserById(targetId);
+        User target = userRepository.getUserByIdOrThrow(targetId);
         if (follower.getId().equals(target.getId())) {
             throw new IllegalArgumentException("You cannot unfollow yourself");
         }

@@ -21,7 +21,6 @@ import skillspace.skillspace_backend.Company.model.Company;
 import skillspace.skillspace_backend.Job.model.Job;
 import skillspace.skillspace_backend.Job.service.JobHelper;
 import skillspace.skillspace_backend.User.model.User;
-import skillspace.skillspace_backend.User.service.UserHelper;
 import skillspace.skillspace_backend.shared.enums.ApplicationStatus;
 import skillspace.skillspace_backend.shared.security.service.SecurityService;
 
@@ -29,13 +28,11 @@ import skillspace.skillspace_backend.shared.security.service.SecurityService;
 @Slf4j
 public class ApplicationWriteServiceImpl implements ApplicationWriteService {
     private final JobHelper jobHelper;
-    private final UserHelper userHelper;
     private final ApplicationRepository repository;
     private final SecurityService securityService;
 
-    public ApplicationWriteServiceImpl(JobHelper jobHelper, UserHelper userHelper, ApplicationRepository repository, SecurityService securityService) {
+    public ApplicationWriteServiceImpl(JobHelper jobHelper, ApplicationRepository repository, SecurityService securityService) {
         this.jobHelper = jobHelper;
-        this.userHelper = userHelper;
         this.repository = repository;
         this.securityService = securityService;
     }

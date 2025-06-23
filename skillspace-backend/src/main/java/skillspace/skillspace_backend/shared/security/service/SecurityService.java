@@ -10,16 +10,16 @@ import org.springframework.stereotype.Service;
 import skillspace.skillspace_backend.Company.model.Company;
 import skillspace.skillspace_backend.Company.service.CompanyHelper;
 import skillspace.skillspace_backend.User.model.User;
-import skillspace.skillspace_backend.User.service.UserHelper;
+import skillspace.skillspace_backend.User.repository.UserRepository;
 import skillspace.skillspace_backend.shared.model.BaseUser;
 
 @Service
 public class SecurityService {
-    private final UserHelper userHelper;
+    private final UserRepository userRepository;
     private final CompanyHelper companyHelper;
 
-    public SecurityService(UserHelper userHelper, CompanyHelper companyHelper) {
-        this.userHelper = userHelper;
+    public SecurityService(UserRepository userRepository, CompanyHelper companyHelper) {
+        this.userRepository = userRepository;
         this.companyHelper = companyHelper;
     }
 
@@ -33,7 +33,7 @@ public class SecurityService {
 
     public User getCurrentUser() {
         String email = getAuthenticationEmail();
-        return userHelper.getUserByEmail(email);
+        return userRepository.getUserByEmailOrThrow(email);
     }
 
     public Company getCurrentCompany() {
@@ -51,7 +51,7 @@ public class SecurityService {
         if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_COMPANY"))) {
             return companyHelper.getCompany(email); // returns Company, which extends BaseUser
         } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
-            return userHelper.getUserByEmail(email); // returns User, which extends BaseUser
+            return userRepository.getUserByEmailOrThrow(email); // returns User, which extends BaseUser
         }
         return null;
     }

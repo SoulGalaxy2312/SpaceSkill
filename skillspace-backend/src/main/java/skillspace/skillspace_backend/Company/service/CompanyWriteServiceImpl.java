@@ -14,7 +14,7 @@ import skillspace.skillspace_backend.Company.request.AddRecruiterDTO;
 import skillspace.skillspace_backend.Company.request.UpdateCompanyProfileDTO;
 import skillspace.skillspace_backend.Company.response.CompanyProfileDTO;
 import skillspace.skillspace_backend.User.model.User;
-import skillspace.skillspace_backend.User.service.UserHelper;
+import skillspace.skillspace_backend.User.repository.UserRepository;
 import skillspace.skillspace_backend.shared.security.service.SecurityService;
 
 @Service
@@ -23,18 +23,18 @@ public class CompanyWriteServiceImpl implements CompanyWriteService {
     private final CompanyRepository companyRepository;
     private final CompanyHelper companyHelper;
     private final SecurityService securityService;
-    private final UserHelper userHelper;
+    private final UserRepository userRepository;
 
     public CompanyWriteServiceImpl(
         CompanyRepository companyRepository, 
         CompanyHelper companyHelper,
         SecurityService securityService,
-        UserHelper userHelper) {
+        UserRepository userRepository) {
 
         this.companyHelper = companyHelper;
         this.companyRepository = companyRepository;
         this.securityService = securityService;
-        this.userHelper = userHelper;
+        this.userRepository = userRepository;
     }
 
     public CompanyProfileDTO updateCompanyProfile(UUID companyId, UpdateCompanyProfileDTO dto) {
@@ -69,7 +69,7 @@ public class CompanyWriteServiceImpl implements CompanyWriteService {
             throw new AccessDeniedException("You are not authorized to add recruiter for this company");
         }
 
-        User user = userHelper.getUserByEmail(dto.email());
+        User user = userRepository.getUserByEmailOrThrow(dto.email());
         log.debug("User with id {} was successfully found", user.getId());
 
         List<User> recruiters = company.getRecruiters();
