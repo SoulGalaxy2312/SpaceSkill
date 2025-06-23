@@ -60,4 +60,9 @@ public class SecurityService {
         BaseUser currentBaseUser = getCurrentBaseUser();
         return (currentBaseUser != null) && id.equals(currentBaseUser.getId());
     }
+
+    public UUID getCurrentBaseUserId() {
+        BaseUser currentBaseUser = getCurrentBaseUser();
+        return (currentBaseUser == null) ? null : currentBaseUser.getId();
+    }
 }

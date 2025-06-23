@@ -13,6 +13,7 @@ import skillspace.skillspace_backend.Company.model.Company;
 import skillspace.skillspace_backend.Company.repository.CompanyRepository;
 import skillspace.skillspace_backend.Company.response.CompanyProfileDTO;
 import skillspace.skillspace_backend.User.model.User;
+import skillspace.skillspace_backend.User.repository.UserRepository;
 import skillspace.skillspace_backend.shared.mapper.BaseUserMapper;
 import skillspace.skillspace_backend.shared.model.BaseUserBrief;
 import skillspace.skillspace_backend.shared.security.service.SecurityService;
@@ -22,16 +23,24 @@ import skillspace.skillspace_backend.shared.security.service.SecurityService;
 public class CompanyReadServiceImpl implements CompanyReadService {
     private final CompanyRepository companyRepository;
     private final SecurityService securityService;
+    private final UserRepository userRepository;
 
-    public CompanyReadServiceImpl(CompanyRepository companyRepository, SecurityService securityService) {
+    public CompanyReadServiceImpl(CompanyRepository companyRepository, SecurityService securityService, UserRepository userRepository) {
         this.companyRepository = companyRepository;
         this.securityService = securityService;
+        this.userRepository = userRepository;
     }
 
     public CompanyProfileDTO getCompanyProfile(UUID companyId) {
-        boolean isCurrentCompany = securityService.assertCurrentUserMatches(companyId);
         Company company = companyRepository.getCompanyByIdOrThrow(companyId);
-        return CompanyMapper.toCompanyProfileDTO(company, isCurrentCompany);
+        UUID currentBaseUserId = securityService.getCurrentBaseUserId();
+
+        boolean isCurrentCompany = (currentBaseUserId != null) 
+            && company.getId().equals(currentBaseUserId);
+        boolean isFollowedByCurrentBaseUser = (!isCurrentCompany) 
+            && userRepository.isCompanyFollowedByCurrentBaseUser(companyId, currentBaseUserId);
+        
+        return CompanyMapper.toCompanyProfileDTO(company, isCurrentCompany, isFollowedByCurrentBaseUser);
     }
 
     public List<BaseUserBrief> getRecruiters(UUID companyId, int page, int size) throws AccessDeniedException {

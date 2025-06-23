@@ -67,7 +67,7 @@ public class UserWriteServiceImpl implements UserWriteService {
         entity.setUser(user);
 
         user.getExperiences().add(entity);
-        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true);
+        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true, false);
         cacheService.writeHash(userId, profile);
         return profile;
     }
@@ -85,7 +85,7 @@ public class UserWriteServiceImpl implements UserWriteService {
         experiences.removeIf((experience) -> {
             return experience.getId().equals(experienceId);
         });
-        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true);
+        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true, false);
         cacheService.writeHash(userId, profile);
         return profile;
     }
@@ -110,7 +110,7 @@ public class UserWriteServiceImpl implements UserWriteService {
         entity.setDegree(educationDTO.degree());
         
         user.getEducations().add(entity);
-        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true);
+        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true, false);
         cacheService.writeHash(userId, profile);
         return profile;
     }
@@ -129,7 +129,7 @@ public class UserWriteServiceImpl implements UserWriteService {
         educations.removeIf((education) -> {
             return education.getId().equals(educationId);
         });
-        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true);
+        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true, false);
         cacheService.writeHash(userId, profile);
         return profile;
     }
@@ -152,7 +152,7 @@ public class UserWriteServiceImpl implements UserWriteService {
             throw new DuplicateSkillException("Skill: " + skill + " already exists");
         }
         skills.add(skill);
-        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true);
+        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true, false);
         cacheService.writeHash(userId, profile);
         return profile;
     }
@@ -166,7 +166,7 @@ public class UserWriteServiceImpl implements UserWriteService {
 
         User user = userRepository.getUserByIdOrThrow(userId);
         user.getSkills().remove(skill);
-        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true);
+        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true, false);
         cacheService.writeHash(userId, profile);
         return profile;
     }

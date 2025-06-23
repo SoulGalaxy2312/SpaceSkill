@@ -28,18 +28,21 @@ public class UserReadServiceImpl implements UserReadService {
         this.userRepository = userRepository;
     }
 
-    public UserProfileDTO getUserProfile(UUID userId) throws UserNotFoundException, JsonProcessingException {
+    public UserProfileDTO getUserProfile(UUID targetId) throws UserNotFoundException, JsonProcessingException {
         Supplier<UserProfileDTO> dataSupplier = () -> {
             try {
-                User user = userRepository.getUserByIdOrThrow(userId);    
-                boolean isCurrentUser = securityService.assertCurrentUserMatches(userId);
-                return UserMapper.toUserProfileDTO(user, isCurrentUser);
+                User target = userRepository.getUserByIdOrThrow(targetId);
+                UUID currentUserId = securityService.getCurrentBaseUserId();
+
+                boolean isCurrentBaseUser = target.getId().equals(currentUserId);
+                boolean isFollowedByCurrentUser = (!isCurrentBaseUser) && userRepository.isUserFollowedByCurrentBaseUser(targetId, currentUserId);
+                return UserMapper.toUserProfileDTO(target, isCurrentBaseUser, isFollowedByCurrentUser);
             } catch (UserNotFoundException ex) {
                 throw ex;
             }
         };
 
-        UserProfileDTO profile = cacheService.loadAndCacheUserProfileDTO(userId, dataSupplier);
+        UserProfileDTO profile = cacheService.loadAndCacheUserProfileDTO(targetId, dataSupplier);
         return profile;
     }
 }

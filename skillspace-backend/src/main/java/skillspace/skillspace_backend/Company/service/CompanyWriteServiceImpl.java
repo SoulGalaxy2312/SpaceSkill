@@ -47,9 +47,7 @@ public class CompanyWriteServiceImpl implements CompanyWriteService {
         if (dto.about() != null) company.setAbout(dto.about());
 
         Company savedCompany = companyRepository.save(company);
-        log.debug("Company profile updated successfully for company {}", companyId);
-        log.debug("Returning updated company profile DTO");
-        return CompanyMapper.toCompanyProfileDTO(savedCompany, isCurrentCompany);
+        return CompanyMapper.toCompanyProfileDTO(savedCompany, isCurrentCompany, false);
     }
 
     public CompanyProfileDTO addRecruiter(UUID companyId, AddRecruiterDTO dto) throws AccessDeniedException {
@@ -72,7 +70,7 @@ public class CompanyWriteServiceImpl implements CompanyWriteService {
         List<User> recruiters = company.getRecruiters();
         if (recruiters.contains(user)) {
             log.info("User {} is already a recruiter for company {}", user.getId(), company.getId());
-            return CompanyMapper.toCompanyProfileDTO(company, isCurrentCompany);
+            return CompanyMapper.toCompanyProfileDTO(company, isCurrentCompany, false);
         }
 
         recruiters.add(user);
@@ -80,6 +78,6 @@ public class CompanyWriteServiceImpl implements CompanyWriteService {
         Company savedCompany = companyRepository.save(company);
         log.debug("Recruiter with id {} added successfully to company {}", user.getId(), company.getId());
         log.debug("Returning updated company profile DTO");
-        return CompanyMapper.toCompanyProfileDTO(savedCompany, isCurrentCompany);
+        return CompanyMapper.toCompanyProfileDTO(savedCompany, isCurrentCompany, false);
     }
 }
