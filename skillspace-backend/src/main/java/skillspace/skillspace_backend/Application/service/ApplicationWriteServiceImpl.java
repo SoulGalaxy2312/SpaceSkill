@@ -19,7 +19,7 @@ import skillspace.skillspace_backend.Application.request.ProcessApplicationReque
 import skillspace.skillspace_backend.Application.response.ApplicationResponseDTO;
 import skillspace.skillspace_backend.Company.model.Company;
 import skillspace.skillspace_backend.Job.model.Job;
-import skillspace.skillspace_backend.Job.service.JobHelper;
+import skillspace.skillspace_backend.Job.repository.JobRepository;
 import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.shared.enums.ApplicationStatus;
 import skillspace.skillspace_backend.shared.security.service.SecurityService;
@@ -27,18 +27,18 @@ import skillspace.skillspace_backend.shared.security.service.SecurityService;
 @Service
 @Slf4j
 public class ApplicationWriteServiceImpl implements ApplicationWriteService {
-    private final JobHelper jobHelper;
-    private final ApplicationRepository repository;
+    private final ApplicationRepository applicationRepository;
+    private final JobRepository jobRepository;
     private final SecurityService securityService;
 
-    public ApplicationWriteServiceImpl(JobHelper jobHelper, ApplicationRepository repository, SecurityService securityService) {
-        this.jobHelper = jobHelper;
-        this.repository = repository;
+    public ApplicationWriteServiceImpl(ApplicationRepository applicationRepository, JobRepository jobRepository, SecurityService securityService) { 
+        this.applicationRepository = applicationRepository;
+        this.jobRepository = jobRepository;
         this.securityService = securityService;
     }
 
     public ApplicationResponseDTO applyJob(UUID jobId, ApplicationRequestDTO request) {
-        Job job = jobHelper.getJob(jobId);
+        Job job = jobRepository.getJobByIdOrThrow(jobId);
         User user = securityService.getCurrentUser();
         
         Application application = new Application();
@@ -47,12 +47,12 @@ public class ApplicationWriteServiceImpl implements ApplicationWriteService {
         application.setUser(user);
         application.setStatus(ApplicationStatus.PENDING);
         
-        Application saved = repository.save(application);
+        Application saved = applicationRepository.save(application);
         return ApplicationMapper.toApplicationResponseDTO(saved);
     }    
 
     public ApplicationResponseDTO processApplication(UUID applicationId, ProcessApplicationRequestDTO dto) throws ApplicationNotFoundException {
-        Application application = repository.findById(applicationId)
+        Application application = applicationRepository.findById(applicationId)
             .orElseThrow(() -> {
                 log.warn("Application with id {} was not found", applicationId);
                 return new ApplicationNotFoundException(applicationId);
@@ -78,7 +78,7 @@ public class ApplicationWriteServiceImpl implements ApplicationWriteService {
 
         application.setStatus(dto.status());
         application.setReviewerNote(dto.reviewerNote());
-        Application saved = repository.save(application);
+        Application saved = applicationRepository.save(application);
         return ApplicationMapper.toApplicationResponseDTO(saved);
     }
 }

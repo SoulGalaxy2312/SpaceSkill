@@ -27,13 +27,11 @@ public class JobWriteServiceImpl implements JobWriteService {
 
     private final JobRepository jobRepository;
     private final CompanyRepository companyRepository;
-    private final JobHelper jobHelper;
     private final NotificationWriteService notificationWriteService;
 
-    public JobWriteServiceImpl(JobRepository jobRepository, CompanyRepository companyRepository, JobHelper jobHelper, NotificationWriteService notificationWriteService) {
+    public JobWriteServiceImpl(JobRepository jobRepository, CompanyRepository companyRepository, NotificationWriteService notificationWriteService) {
         this.jobRepository = jobRepository;
         this.companyRepository = companyRepository;
-        this.jobHelper = jobHelper;
         this.notificationWriteService = notificationWriteService;
     }
 
@@ -57,7 +55,7 @@ public class JobWriteServiceImpl implements JobWriteService {
     }
 
     public JobResponseDTO updateJob(UUID jobId, JobRequestDTO jobRequestDTO) throws AccessDeniedException {  
-        Job job = jobHelper.getJob(jobId);
+        Job job = jobRepository.getJobByIdOrThrow(jobId);
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Company company = companyRepository.getCompanyByEmailOrThrow(email);
 
@@ -76,7 +74,7 @@ public class JobWriteServiceImpl implements JobWriteService {
     }
 
     public StatusResponseDTO deleteJob(UUID jobId) throws AccessDeniedException {
-        Job job = jobHelper.getJob(jobId);
+        Job job = jobRepository.getJobByIdOrThrow(jobId);
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Company company = companyRepository.getCompanyByEmailOrThrow(email);
 
