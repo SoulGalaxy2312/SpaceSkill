@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.extern.slf4j.Slf4j;
-import skillspace.skillspace_backend.Notification.response.NotificationResponseDTO;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
 import skillspace.skillspace_backend.User.service.UserReadService;
 import skillspace.skillspace_backend.shared.constants.ApiPath;
+import skillspace.skillspace_backend.shared.model.BaseUserBrief;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -38,13 +39,15 @@ public class UserReadController {
         UserProfileDTO profile = userReadService.getUserProfile(userId);
         log.info("Successfully get user profile with id: {}", userId);
         return profile;
-    }
+    }    
 
-    @GetMapping("/notifications")
+    @GetMapping("/following-companies")
     @PreAuthorize("hasRole('USER')")
-    public List<NotificationResponseDTO> getNotifications(@RequestParam String param) {
-        return null;
+    public List<BaseUserBrief> getFollowingCompanies(
+        @RequestParam(required = false, defaultValue = "0") int page,
+        @RequestParam(required = false, defaultValue = "10") int size
+    ) {
+        return userReadService.getFollowingCompanies(page, size);
     }
-    
     
 }

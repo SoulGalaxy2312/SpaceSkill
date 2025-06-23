@@ -1,18 +1,24 @@
 package skillspace.skillspace_backend.User.service;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.extern.slf4j.Slf4j;
+import skillspace.skillspace_backend.Company.model.Company;
 import skillspace.skillspace_backend.User.exception.UserNotFoundException;
 import skillspace.skillspace_backend.User.mapper.UserMapper;
 import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.User.repository.UserRepository;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
+import skillspace.skillspace_backend.shared.mapper.BaseUserMapper;
+import skillspace.skillspace_backend.shared.model.BaseUserBrief;
 import skillspace.skillspace_backend.shared.security.service.SecurityService;
 
 @Service
@@ -44,5 +50,23 @@ public class UserReadServiceImpl implements UserReadService {
 
         UserProfileDTO profile = cacheService.loadAndCacheUserProfileDTO(targetId, dataSupplier);
         return profile;
+    }
+
+    public List<BaseUserBrief> getFollowingCompanies(int page, int size) {
+        UUID currentUserId = securityService.getCurrentBaseUserId();
+        Pageable pageable = PageRequest.of(page, size);
+        List<Company> followingCompanies = userRepository.findFollowingCompanies(currentUserId, pageable);
+
+        if (followingCompanies.isEmpty()) {
+            log.info("No following companies found for user with id: {}", currentUserId);
+        } else {
+            log.info("Found {} following companies for user with id: {}", followingCompanies.size(), currentUserId);
+        }
+
+        List<BaseUserBrief> response = followingCompanies.stream()
+            .map(BaseUserMapper::toBaseUserBrief)
+            .toList();
+        
+        return response;
     }
 }

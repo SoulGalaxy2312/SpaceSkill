@@ -23,7 +23,7 @@ public class NotificationReadController {
     
     @GetMapping(ApiPath.NOTIFICATION + "/notifications")
     @PreAuthorize("hasRole('USER')")
-    public List<NotificationResponseDTO> getMethodName(
+    public List<NotificationResponseDTO> getNotifications(
         @RequestParam(name = "page", required = false ,defaultValue = "0") int page,
         @RequestParam(name = "size", required = false ,defaultValue = "10") int size
     ) {
