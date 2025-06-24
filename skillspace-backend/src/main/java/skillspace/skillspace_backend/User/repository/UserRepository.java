@@ -32,7 +32,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
                     SELECT 1 
                     FROM user_connections 
                     WHERE connected_user_id = :followed 
-                    AND follower_user_id = :follower
+                    AND user_id = :follower
                 )
                 """,
         nativeQuery = true
