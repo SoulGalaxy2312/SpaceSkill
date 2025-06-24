@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,6 +18,7 @@ import skillspace.skillspace_backend.User.mapper.UserMapper;
 import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.User.repository.UserRepository;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
+import skillspace.skillspace_backend.User.specification.UserSpecification;
 import skillspace.skillspace_backend.shared.mapper.BaseUserMapper;
 import skillspace.skillspace_backend.shared.model.BaseUserBrief;
 import skillspace.skillspace_backend.shared.security.service.SecurityService;
@@ -86,5 +88,33 @@ public class UserReadServiceImpl implements UserReadService {
             .toList();
         
         return response;
-    }   
+    } 
+
+    public List<BaseUserBrief> searchUsers(String profileName, int page, int size) {
+        profileName = safeTrim(profileName);
+        if (profileName == null || profileName.isEmpty()) {
+            log.info("Search profile name is empty or null, returning empty list.");
+            return List.of();
+        }
+        log.info("Searching users with profile name: {}", profileName);
+        Specification<User> spec = UserSpecification.fullTextSearchProfileName(profileName);
+        Pageable pageable = PageRequest.of(page, size);
+        List<User> users = userRepository.findAll(spec, pageable).getContent();
+
+        if (users.isEmpty()) {
+            log.info("No users found with profile name: {}", profileName);
+        } else {
+            log.info("Found {} users with profile name: {}", users.size(), profileName);
+        }
+
+        List<BaseUserBrief> response = users.stream()
+            .map(BaseUserMapper::toBaseUserBrief)
+            .toList();
+        
+        return response;
+    }
+
+    private String safeTrim(String str) {
+        return str.trim().isEmpty() ? null : str.trim();
+    }
 }

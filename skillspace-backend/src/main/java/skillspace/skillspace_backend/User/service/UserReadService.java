@@ -13,4 +13,5 @@ public interface UserReadService {
     UserProfileDTO getUserProfile(UUID id) throws UserNotFoundException, JsonProcessingException;
     List<BaseUserBrief> getFollowingCompanies(int page, int size);
     List<BaseUserBrief> getConnections(int page, int size);
+    List<BaseUserBrief> searchUsers(String profileName, int page, int size);
 }

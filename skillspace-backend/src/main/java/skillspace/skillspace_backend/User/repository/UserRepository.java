@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +15,7 @@ import skillspace.skillspace_backend.User.exception.UserNotFoundException;
 import skillspace.skillspace_backend.User.model.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, UUID> { 
+public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificationExecutor<User> { 
     default User getUserByIdOrThrow(UUID userId) {
         return findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));

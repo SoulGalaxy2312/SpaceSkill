@@ -59,4 +59,12 @@ public class UserReadController {
         return userReadService.getConnections(page, size);
     }
     
+    @GetMapping("/search")
+    public List<BaseUserBrief> searchUsers(
+        @RequestParam String profileName,
+        @RequestParam(required = false, defaultValue = "0") int page,
+        @RequestParam(required = false, defaultValue = "10") int size
+    ) {
+        return userReadService.searchUsers(profileName, page, size);
+    }
 }
