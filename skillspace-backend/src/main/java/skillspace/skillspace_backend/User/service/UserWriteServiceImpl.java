@@ -3,7 +3,6 @@ package skillspace.skillspace_backend.User.service;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -51,14 +50,8 @@ public class UserWriteServiceImpl implements UserWriteService {
      * Experience section
      */
     @Transactional
-    public UserProfileDTO addExperience(UUID userId, AddExperienceDTO dto) throws JsonProcessingException, AccessDeniedException {
-        boolean isCurrentUser = securityService.assertCurrentUserMatches(userId);
-        if (!isCurrentUser) {
-            log.warn("Current user is not authorized to add experience for user {}", userId);
-            throw new AccessDeniedException("You are not authorized to add experience for this user");
-        };
-
-        User user = userRepository.getUserByIdOrThrow(userId);
+    public UserProfileDTO addExperience(AddExperienceDTO dto) throws JsonProcessingException {
+        User user = securityService.getCurrentUser();
         Experience entity = new Experience();
         entity.setStartDate(dto.startDate());
         entity.setEndDate(dto.endDate());
@@ -68,25 +61,19 @@ public class UserWriteServiceImpl implements UserWriteService {
 
         user.getExperiences().add(entity);
         UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true, false);
-        cacheService.writeHash(userId, profile);
+        cacheService.writeHash(user.getId(), profile);
         return profile;
     }
 
     @Transactional
-    public UserProfileDTO deleteExperience(UUID userId, UUID experienceId) throws JsonProcessingException, AccessDeniedException {
-        boolean isCurrentUser = securityService.assertCurrentUserMatches(userId);
-        if (!isCurrentUser) {
-            log.warn("Current user is not authorized to delete experience for user {}", userId);
-            throw new AccessDeniedException("You are not authorized to delete experience for this user");
-        };
-
-        User user = userRepository.getUserByIdOrThrow(userId);
+    public UserProfileDTO deleteExperience(UUID experienceId) throws JsonProcessingException {
+        User user = securityService.getCurrentUser();
         List<Experience> experiences = user.getExperiences();
         experiences.removeIf((experience) -> {
             return experience.getId().equals(experienceId);
         });
         UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true, false);
-        cacheService.writeHash(userId, profile);
+        cacheService.writeHash(user.getId(), profile);
         return profile;
     }
 
@@ -94,14 +81,8 @@ public class UserWriteServiceImpl implements UserWriteService {
      * Education section
      */
     @Transactional
-    public UserProfileDTO addEducation(UUID userId, AddEducationDTO educationDTO) throws JsonProcessingException, AccessDeniedException {
-        boolean isCurrentUser = securityService.assertCurrentUserMatches(userId);
-        if (!isCurrentUser) {
-            log.warn("Current user is not authorized to add education for user {}", userId);
-            throw new AccessDeniedException("You are not authorized to add education for this user");
-        };
-        
-        User user = userRepository.getUserByIdOrThrow(userId);
+    public UserProfileDTO addEducation(AddEducationDTO educationDTO) throws JsonProcessingException {
+        User user = securityService.getCurrentUser();
         Education entity = new Education();
         entity.setStartDate(educationDTO.startDate());
         entity.setEndDate(educationDTO.endDate());
@@ -111,41 +92,27 @@ public class UserWriteServiceImpl implements UserWriteService {
         
         user.getEducations().add(entity);
         UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true, false);
-        cacheService.writeHash(userId, profile);
+        cacheService.writeHash(user.getId(), profile);
         return profile;
     }
 
     @Transactional
-    public UserProfileDTO deleteEducation(UUID userId, UUID educationId) throws JsonProcessingException, AccessDeniedException {
-        
-        boolean isCurrentUser = securityService.assertCurrentUserMatches(userId);
-        if (!isCurrentUser) {
-            log.warn("Current user is not authorized to delete education for user {}", userId);
-            throw new AccessDeniedException("You are not authorized to delete education for this user");
-        };
-
-        User user = userRepository.getUserByIdOrThrow(userId);
+    public UserProfileDTO deleteEducation(UUID educationId) throws JsonProcessingException {
+        User user = securityService.getCurrentUser();
         List<Education> educations = user.getEducations();
         educations.removeIf((education) -> {
             return education.getId().equals(educationId);
         });
         UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true, false);
-        cacheService.writeHash(userId, profile);
+        cacheService.writeHash(user.getId(), profile);
         return profile;
     }
 
     /**
      * Skill section
      */
-
-    public UserProfileDTO addSkill(UUID userId, String skill) throws DuplicateSkillException, JsonProcessingException, AccessDeniedException {
-        boolean isCurrentUser = securityService.assertCurrentUserMatches(userId);
-        if (!isCurrentUser) {
-            log.warn("Current user is not authorized to add skill for user {}", userId);
-            throw new AccessDeniedException("You are not authorized to add skill for this user");
-        };
-
-        User user = userRepository.getUserByIdOrThrow(userId);
+    public UserProfileDTO addSkill(String skill) throws DuplicateSkillException, JsonProcessingException {
+        User user = securityService.getCurrentUser();
         List<String> skills = user.getSkills();
         if (skills.contains(skill)) {
             log.warn("Add skill fail: skill {} already exists", skill);
@@ -153,21 +120,15 @@ public class UserWriteServiceImpl implements UserWriteService {
         }
         skills.add(skill);
         UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true, false);
-        cacheService.writeHash(userId, profile);
+        cacheService.writeHash(user.getId(), profile);
         return profile;
     }
 
-    public UserProfileDTO deleteSkill(UUID userId, String skill) throws JsonProcessingException, AccessDeniedException {
-        boolean isCurrentUser = securityService.assertCurrentUserMatches(userId);
-        if (!isCurrentUser) {
-            log.warn("Current user is not authorized to delete skill for user {}", userId);
-            throw new AccessDeniedException("You are not authorized to delete skill for this user");
-        };
-
-        User user = userRepository.getUserByIdOrThrow(userId);
+    public UserProfileDTO deleteSkill(String skill) throws JsonProcessingException {
+        User user = securityService.getCurrentUser();
         user.getSkills().remove(skill);
         UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true, false);
-        cacheService.writeHash(userId, profile);
+        cacheService.writeHash(user.getId(), profile);
         return profile;
     }
     

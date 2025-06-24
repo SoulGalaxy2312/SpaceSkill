@@ -34,38 +34,34 @@ public class UserWriteController {
     /**
      * Experience section
      */
-    @PostMapping(ApiPath.USER + "/{userId}/experience")
-    public UserProfileDTO addExperience(@PathVariable UUID userId, @RequestBody AddExperienceDTO experience) throws JsonProcessingException {
-        log.info("Add experience to user with id: {}", userId);
-        UserProfileDTO userProfileDTO = userWriteService.addExperience(userId, experience);
-        log.info("Successfully add experience to user with id: {}", userId);
+    @PostMapping(ApiPath.USER + "/experience")
+    @PreAuthorize("hasRole('USER')")
+    public UserProfileDTO addExperience(@RequestBody AddExperienceDTO experience) throws JsonProcessingException {
+        UserProfileDTO userProfileDTO = userWriteService.addExperience(experience);
         return userProfileDTO;
     }
 
-    @DeleteMapping(ApiPath.USER + "/{userId}/experience/{experienceId}") 
-    public UserProfileDTO deleteExperience(@PathVariable UUID userId, @PathVariable UUID experienceId) throws JsonProcessingException {
-        log.info("Delete experienceId {} of userId {}", experienceId, userId);
-        UserProfileDTO userProfileDTO = userWriteService.deleteExperience(userId, experienceId);
-        log.info("Successfully delete experienceId {} of userId {}", experienceId, userId);
+    @DeleteMapping(ApiPath.USER + "/experience/{experienceId}") 
+    @PreAuthorize("hasRole('USER')")
+    public UserProfileDTO deleteExperience(@PathVariable UUID experienceId) throws JsonProcessingException {
+        UserProfileDTO userProfileDTO = userWriteService.deleteExperience(experienceId);
         return userProfileDTO;
     }
 
     /**
      * Education section
      */
-    @PostMapping(ApiPath.USER + "/{userId}/education")
-    public UserProfileDTO addEducation(@PathVariable UUID userId, @RequestBody AddEducationDTO educationDTO) throws JsonProcessingException { 
-        log.info("Add education to user with id: {}", userId);
-        UserProfileDTO userProfileDTO = userWriteService.addEducation(userId, educationDTO);
-        log.info("Successfully add education to user with id: {}", userId);
+    @PostMapping(ApiPath.USER + "/education")
+    @PreAuthorize("hasRole('USER')")
+    public UserProfileDTO addEducation(@RequestBody AddEducationDTO educationDTO) throws JsonProcessingException { 
+        UserProfileDTO userProfileDTO = userWriteService.addEducation(educationDTO);
         return userProfileDTO;
     }
     
-    @DeleteMapping(ApiPath.USER + "/{userId}/education/{educationId}") 
-    public UserProfileDTO deleteEducation(@PathVariable UUID userId, @PathVariable UUID educationId) throws JsonProcessingException {
-        log.info("Delete educationId {} of userId {}", educationId, userId);
-        UserProfileDTO userProfileDTO = userWriteService.deleteEducation(userId, educationId);
-        log.info("Successfully delete educationId {} of userId {}", educationId, userId);
+    @DeleteMapping(ApiPath.USER + "/education/{educationId}") 
+    @PreAuthorize("hasRole('USER')")
+    public UserProfileDTO deleteEducation(@PathVariable UUID educationId) throws JsonProcessingException {
+        UserProfileDTO userProfileDTO = userWriteService.deleteEducation(educationId);
         return userProfileDTO;
     }
 
@@ -73,18 +69,16 @@ public class UserWriteController {
      * Skill section
      */
     @PostMapping(ApiPath.USER + "/{userId}/skill/{skill}")
-    public UserProfileDTO addSkill(@PathVariable UUID userId, @PathVariable String skill) throws JsonProcessingException {
-        log.info("Add skill {} for userId {}", skill, userId);
-        UserProfileDTO userProfileDTO = userWriteService.addSkill(userId, skill);
-        log.info("Successfully add skill {}", skill);
+    @PreAuthorize("hasRole('USER')")
+    public UserProfileDTO addSkill(@PathVariable String skill) throws JsonProcessingException {
+        UserProfileDTO userProfileDTO = userWriteService.addSkill(skill);
         return userProfileDTO;
     }
 
     @DeleteMapping(ApiPath.USER + "/{userId}/skill/{skill}")
-    public UserProfileDTO deleteSkill(@PathVariable UUID userId, @PathVariable String skill) throws JsonProcessingException {
-        log.info("Delete skill {} for userId {}", skill, userId);
-        UserProfileDTO userProfileDTO = userWriteService.deleteSkill(userId, skill);
-        log.info("Successfully delete skill {}", skill);
+    @PreAuthorize("hasRole('USER')")
+    public UserProfileDTO deleteSkill(@PathVariable String skill) throws JsonProcessingException {
+        UserProfileDTO userProfileDTO = userWriteService.deleteSkill(skill);
         return userProfileDTO;
     }
 

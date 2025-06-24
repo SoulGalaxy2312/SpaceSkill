@@ -2,8 +2,6 @@ package skillspace.skillspace_backend.User.service;
 
 import java.util.UUID;
 
-import org.springframework.security.access.AccessDeniedException;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import skillspace.skillspace_backend.User.exception.DuplicateSkillException;
@@ -15,16 +13,16 @@ import skillspace.skillspace_backend.shared.response.StatusResponseDTO;
 
 public interface UserWriteService {
     // Experience section
-    UserProfileDTO addExperience(UUID userId, AddExperienceDTO experience) throws JsonProcessingException, AccessDeniedException;    
-    UserProfileDTO deleteExperience(UUID userId, UUID experienceId) throws JsonProcessingException, AccessDeniedException;
+    UserProfileDTO addExperience(AddExperienceDTO experience) throws JsonProcessingException;    
+    UserProfileDTO deleteExperience(UUID experienceId) throws JsonProcessingException;
     
     // Education section
-    UserProfileDTO addEducation(UUID userId, AddEducationDTO educationDTO) throws JsonProcessingException, AccessDeniedException;
-    UserProfileDTO deleteEducation(UUID userId, UUID educationId) throws JsonProcessingException, AccessDeniedException;
+    UserProfileDTO addEducation(AddEducationDTO educationDTO) throws JsonProcessingException;
+    UserProfileDTO deleteEducation(UUID educationId) throws JsonProcessingException;
 
     // Skill section
-    UserProfileDTO addSkill(UUID userId, String skill) throws DuplicateSkillException, JsonProcessingException, AccessDeniedException;
-    UserProfileDTO deleteSkill(UUID userId, String skill) throws JsonProcessingException, AccessDeniedException;
+    UserProfileDTO addSkill(String skill) throws DuplicateSkillException, JsonProcessingException;
+    UserProfileDTO deleteSkill(String skill) throws JsonProcessingException;
 
     // Follow section
     StatusResponseDTO follow(FollowRequestDTO followRequestDTO) throws IllegalArgumentException;
