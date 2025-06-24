@@ -2,13 +2,11 @@ package skillspace.skillspace_backend.Company.service;
 
 import java.util.UUID;
 
-import org.springframework.security.access.AccessDeniedException;
-
-import skillspace.skillspace_backend.Company.request.AddRecruiterDTO;
 import skillspace.skillspace_backend.Company.request.UpdateCompanyProfileDTO;
-import skillspace.skillspace_backend.Company.response.CompanyProfileDTO;
+import skillspace.skillspace_backend.shared.response.StatusResponseDTO;
 
 public interface CompanyWriteService {
-    CompanyProfileDTO updateCompanyProfile(UUID companyId, UpdateCompanyProfileDTO dto);
-    CompanyProfileDTO addRecruiter(UUID companyId, AddRecruiterDTO dto) throws AccessDeniedException;
+    StatusResponseDTO updateCompanyProfile(UpdateCompanyProfileDTO dto);
+    StatusResponseDTO addRecruiter(UUID recruiterId);
+    StatusResponseDTO removeRecruiter(UUID recruiterId);
 }
