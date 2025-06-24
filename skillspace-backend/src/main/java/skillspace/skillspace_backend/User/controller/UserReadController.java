@@ -50,4 +50,13 @@ public class UserReadController {
         return userReadService.getFollowingCompanies(page, size);
     }
     
+    @GetMapping("/connections")
+    @PreAuthorize("hasRole('USER')")
+    public List<BaseUserBrief> getConnections(
+        @RequestParam(required = false, defaultValue = "0") int page,
+        @RequestParam(required = false, defaultValue = "10") int size
+    ) {
+        return userReadService.getConnections(page, size);
+    }
+    
 }

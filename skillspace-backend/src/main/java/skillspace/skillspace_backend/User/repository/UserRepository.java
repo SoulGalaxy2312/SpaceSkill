@@ -54,11 +54,21 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query(
         """
-            SELECT c 
+            SELECT c
             FROM User u
             JOIN u.followingCompanies c
             WHERE u.id = :userId        
         """
     )
     List<Company> findFollowingCompanies(UUID userId, Pageable pageable);
+
+    @Query(
+        """
+            SELECT c
+            FROM User u
+            JOIN u.connections c
+            WHERE u.id = :userId        
+        """
+    )
+    List<User> findConnections(UUID userId, Pageable pageable);
 }

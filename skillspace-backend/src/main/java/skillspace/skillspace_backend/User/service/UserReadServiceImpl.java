@@ -69,4 +69,22 @@ public class UserReadServiceImpl implements UserReadService {
         
         return response;
     }
+
+    public List<BaseUserBrief> getConnections(int page, int size) {
+        UUID currentUserId = securityService.getCurrentBaseUserId();
+        Pageable pageable = PageRequest.of(page, size);
+        List<User> connections = userRepository.findConnections(currentUserId, pageable);
+
+        if (connections.isEmpty()) {
+            log.info("No connections found for user with id: {}", currentUserId);
+        } else {
+            log.info("Found {} connections for user with id: {}", connections.size(), currentUserId);
+        }
+
+        List<BaseUserBrief> response = connections.stream()
+            .map(BaseUserMapper::toBaseUserBrief)
+            .toList();
+        
+        return response;
+    }   
 }

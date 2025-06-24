@@ -12,4 +12,5 @@ import skillspace.skillspace_backend.shared.model.BaseUserBrief;
 public interface UserReadService {
     UserProfileDTO getUserProfile(UUID id) throws UserNotFoundException, JsonProcessingException;
     List<BaseUserBrief> getFollowingCompanies(int page, int size);
+    List<BaseUserBrief> getConnections(int page, int size);
 }
