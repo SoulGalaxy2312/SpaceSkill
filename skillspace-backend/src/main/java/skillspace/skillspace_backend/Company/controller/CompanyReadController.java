@@ -32,7 +32,6 @@ public class CompanyReadController {
     @GetMapping(ApiPath.COMPANY + "/recruiters")
     @PreAuthorize("hasRole('COMPANY')")
     public List<BaseUserBrief> getRecruiters(
-        @PathVariable(required = true) UUID companyId,
         @RequestParam(required = false, defaultValue = "0") int page,
         @RequestParam(required = false, defaultValue = "10") int size) {
 
