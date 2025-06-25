@@ -12,6 +12,9 @@ public class ApiPath {
     // Company APIs
     public static final String COMPANY = API + "/companies";
 
+    // Admin APIs
+    public static final String ADMIN = API + "/admins";
+
     // Job APIs
     public static final String JOB =  API + "/jobs";
 
