@@ -1,8 +1,8 @@
 package skillspace.skillspace_backend.Notification.mapper;
 
+import skillspace.skillspace_backend.BaseUser.response.BaseUserBrief;
 import skillspace.skillspace_backend.Notification.model.Notification;
 import skillspace.skillspace_backend.Notification.response.NotificationResponseDTO;
-import skillspace.skillspace_backend.shared.model.BaseUserBrief;
 
 public class NotificationMapper {
     

@@ -13,10 +13,10 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import skillspace.skillspace_backend.BaseUser.model.BaseUser;
 import skillspace.skillspace_backend.Job.model.Job;
 import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.shared.enums.UserRole;
-import skillspace.skillspace_backend.shared.model.BaseUser;
 
 @Entity
 @Data

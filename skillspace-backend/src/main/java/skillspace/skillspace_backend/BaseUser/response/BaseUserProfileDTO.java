@@ -1,4 +1,4 @@
-package skillspace.skillspace_backend.shared.response;
+package skillspace.skillspace_backend.BaseUser.response;
 
 import java.util.UUID;
 

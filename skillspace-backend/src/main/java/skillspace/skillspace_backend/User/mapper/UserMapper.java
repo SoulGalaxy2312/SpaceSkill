@@ -2,10 +2,10 @@ package skillspace.skillspace_backend.User.mapper;
 
 import java.util.stream.Collectors;
 
+import skillspace.skillspace_backend.BaseUser.response.BaseUserProfileDTO;
 import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
 import skillspace.skillspace_backend.shared.enums.UserRole;
-import skillspace.skillspace_backend.shared.response.BaseUserProfileDTO;
 
 public class UserMapper {
     

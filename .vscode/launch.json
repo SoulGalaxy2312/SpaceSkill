@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-SkillspaceBackendApplication<skillspace-backend>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "skillspace.skillspace_backend.SkillspaceBackendApplication",
+            "projectName": "skillspace-backend",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

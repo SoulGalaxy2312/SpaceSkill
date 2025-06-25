@@ -5,9 +5,9 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import skillspace.skillspace_backend.BaseUser.response.BaseUserBrief;
 import skillspace.skillspace_backend.User.exception.UserNotFoundException;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
-import skillspace.skillspace_backend.shared.model.BaseUserBrief;
 
 public interface UserReadService {
     UserProfileDTO getUserProfile(UUID id) throws UserNotFoundException, JsonProcessingException;

@@ -1,10 +1,10 @@
 package skillspace.skillspace_backend.Company.mapper;
 
+import skillspace.skillspace_backend.BaseUser.response.BaseUserProfileDTO;
 import skillspace.skillspace_backend.Company.model.Company;
 import skillspace.skillspace_backend.Company.response.CompanyApplicationDTO;
 import skillspace.skillspace_backend.Company.response.CompanyProfileDTO;
 import skillspace.skillspace_backend.shared.enums.UserRole;
-import skillspace.skillspace_backend.shared.response.BaseUserProfileDTO;
 
 public class CompanyMapper {
     

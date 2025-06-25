@@ -6,11 +6,11 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import skillspace.skillspace_backend.BaseUser.model.BaseUser;
 import skillspace.skillspace_backend.Job.model.Job;
 import skillspace.skillspace_backend.Notification.model.Notification;
 import skillspace.skillspace_backend.Notification.repository.NotificationRepository;
 import skillspace.skillspace_backend.User.model.User;
-import skillspace.skillspace_backend.shared.model.BaseUser;
 
 @Service
 @Slf4j

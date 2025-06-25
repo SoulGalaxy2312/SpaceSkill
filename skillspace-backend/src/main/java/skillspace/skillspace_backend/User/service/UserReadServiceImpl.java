@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.extern.slf4j.Slf4j;
+import skillspace.skillspace_backend.BaseUser.mapper.BaseUserMapper;
+import skillspace.skillspace_backend.BaseUser.response.BaseUserBrief;
 import skillspace.skillspace_backend.Company.model.Company;
 import skillspace.skillspace_backend.User.exception.UserNotFoundException;
 import skillspace.skillspace_backend.User.mapper.UserMapper;
@@ -19,8 +21,6 @@ import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.User.repository.UserRepository;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
 import skillspace.skillspace_backend.User.specification.UserSpecification;
-import skillspace.skillspace_backend.shared.mapper.BaseUserMapper;
-import skillspace.skillspace_backend.shared.model.BaseUserBrief;
 import skillspace.skillspace_backend.shared.security.service.SecurityService;
 
 @Service

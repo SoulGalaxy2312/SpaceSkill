@@ -19,9 +19,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import skillspace.skillspace_backend.Application.model.Application;
+import skillspace.skillspace_backend.BaseUser.model.BaseUser;
 import skillspace.skillspace_backend.Company.model.Company;
 import skillspace.skillspace_backend.shared.enums.UserRole;
-import skillspace.skillspace_backend.shared.model.BaseUser;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

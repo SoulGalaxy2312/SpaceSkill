@@ -2,7 +2,7 @@ package skillspace.skillspace_backend.Notification.response;
 
 import java.util.UUID;
 
-import skillspace.skillspace_backend.shared.model.BaseUserBrief;
+import skillspace.skillspace_backend.BaseUser.response.BaseUserBrief;
 
 public record NotificationResponseDTO(
     UUID id,

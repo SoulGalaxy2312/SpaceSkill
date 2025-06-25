@@ -1,10 +1,10 @@
 package skillspace.skillspace_backend.Job.mapper;
 
+import skillspace.skillspace_backend.BaseUser.mapper.BaseUserMapper;
 import skillspace.skillspace_backend.Company.mapper.CompanyMapper;
 import skillspace.skillspace_backend.Job.model.Job;
 import skillspace.skillspace_backend.Job.request.JobApplicationDTO;
 import skillspace.skillspace_backend.Job.response.JobResponseDTO;
-import skillspace.skillspace_backend.shared.mapper.BaseUserMapper;
 
 public class JobMapper {
     

@@ -2,7 +2,7 @@ package skillspace.skillspace_backend.User.response;
 
 import java.util.List;
 
-import skillspace.skillspace_backend.shared.response.BaseUserProfileDTO;
+import skillspace.skillspace_backend.BaseUser.response.BaseUserProfileDTO;
 
 public record UserProfileDTO(
     BaseUserProfileDTO baseUserProfileInformation,

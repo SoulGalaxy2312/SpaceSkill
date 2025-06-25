@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import skillspace.skillspace_backend.shared.enums.UserRole;
+
 import java.util.stream.Collectors;
 
 @Service

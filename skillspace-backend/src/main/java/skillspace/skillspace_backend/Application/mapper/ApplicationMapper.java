@@ -2,8 +2,8 @@ package skillspace.skillspace_backend.Application.mapper;
 
 import skillspace.skillspace_backend.Application.model.Application;
 import skillspace.skillspace_backend.Application.response.ApplicationResponseDTO;
+import skillspace.skillspace_backend.BaseUser.mapper.BaseUserMapper;
 import skillspace.skillspace_backend.Job.mapper.JobMapper;
-import skillspace.skillspace_backend.shared.mapper.BaseUserMapper;
 
 public class ApplicationMapper {
     

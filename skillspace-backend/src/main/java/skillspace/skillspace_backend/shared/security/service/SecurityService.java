@@ -7,11 +7,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import skillspace.skillspace_backend.BaseUser.model.BaseUser;
 import skillspace.skillspace_backend.Company.model.Company;
 import skillspace.skillspace_backend.Company.repository.CompanyRepository;
 import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.User.repository.UserRepository;
-import skillspace.skillspace_backend.shared.model.BaseUser;
 
 @Service
 public class SecurityService {

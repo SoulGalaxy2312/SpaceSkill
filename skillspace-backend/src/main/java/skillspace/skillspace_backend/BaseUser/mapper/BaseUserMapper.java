@@ -1,7 +1,7 @@
-package skillspace.skillspace_backend.shared.mapper;
+package skillspace.skillspace_backend.BaseUser.mapper;
 
-import skillspace.skillspace_backend.shared.model.BaseUser;
-import skillspace.skillspace_backend.shared.model.BaseUserBrief;
+import skillspace.skillspace_backend.BaseUser.model.BaseUser;
+import skillspace.skillspace_backend.BaseUser.response.BaseUserBrief;
 
 public class BaseUserMapper {
     
