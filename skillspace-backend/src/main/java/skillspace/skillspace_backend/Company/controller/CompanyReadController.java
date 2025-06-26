@@ -6,8 +6,8 @@ import skillspace.skillspace_backend.BaseUser.response.BaseUserBrief;
 import skillspace.skillspace_backend.Company.response.CompanyProfileDTO;
 import skillspace.skillspace_backend.Company.service.CompanyReadService;
 import skillspace.skillspace_backend.shared.constants.ApiPath;
+import skillspace.skillspace_backend.shared.response.PagingDTO;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,11 +31,18 @@ public class CompanyReadController {
 
     @GetMapping(ApiPath.COMPANY + "/recruiters")
     @PreAuthorize("hasRole('COMPANY')")
-    public List<BaseUserBrief> getRecruiters(
+    public PagingDTO<BaseUserBrief> getRecruiters(
         @RequestParam(required = false, defaultValue = "0") int page,
         @RequestParam(required = false, defaultValue = "10") int size) {
+        
+        if (page < 1) {
+            throw new IllegalArgumentException("Page number must be greater than or equal to 1");
+        }
+        if (size < 1 || size > 100) {
+            throw new IllegalArgumentException("Size must be between 1 and 100");
+        }
 
-        return companyReadService.getRecruiters(page, size);
+        return companyReadService.getRecruiters(page - 1, size);
     }
     
 }

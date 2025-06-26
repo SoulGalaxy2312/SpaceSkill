@@ -10,8 +10,8 @@ import skillspace.skillspace_backend.BaseUser.response.BaseUserBrief;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
 import skillspace.skillspace_backend.User.service.UserReadService;
 import skillspace.skillspace_backend.shared.constants.ApiPath;
+import skillspace.skillspace_backend.shared.response.PagingDTO;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -43,28 +43,49 @@ public class UserReadController {
 
     @GetMapping("/following-companies")
     @PreAuthorize("hasRole('USER')")
-    public List<BaseUserBrief> getFollowingCompanies(
+    public PagingDTO<BaseUserBrief> getFollowingCompanies(
         @RequestParam(required = false, defaultValue = "0") int page,
         @RequestParam(required = false, defaultValue = "10") int size
     ) {
-        return userReadService.getFollowingCompanies(page, size);
+        if (page < 1) {
+            throw new IllegalArgumentException("Page number must be greater than or equal to 1");
+        }
+        if (size < 1 || size > 100) {
+            throw new IllegalArgumentException("Size must be between 1 and 100");
+        }
+        log.info("Fetching following companies for page: {}, size: {}", page, size);
+        return userReadService.getFollowingCompanies(page - 1, size);
     }
     
     @GetMapping("/connections")
     @PreAuthorize("hasRole('USER')")
-    public List<BaseUserBrief> getConnections(
+    public PagingDTO<BaseUserBrief> getConnections(
         @RequestParam(required = false, defaultValue = "0") int page,
         @RequestParam(required = false, defaultValue = "10") int size
     ) {
-        return userReadService.getConnections(page, size);
+        if (page < 1) {
+            throw new IllegalArgumentException("Page number must be greater than or equal to 1");
+        }
+        if (size < 1 || size > 100) {
+            throw new IllegalArgumentException("Size must be between 1 and 100");
+        }
+        log.info("Fetching connections for page: {}, size: {}", page, size);
+        return userReadService.getConnections(page - 1, size);
     }
     
     @GetMapping("/search")
-    public List<BaseUserBrief> searchUsers(
+    public PagingDTO<BaseUserBrief> searchUsers(
         @RequestParam String profileName,
         @RequestParam(required = false, defaultValue = "0") int page,
         @RequestParam(required = false, defaultValue = "10") int size
     ) {
-        return userReadService.searchUsers(profileName, page, size);
+        if (page < 1) {
+            throw new IllegalArgumentException("Page number must be greater than or equal to 1");
+        }
+        if (size < 1 || size > 100) {
+            throw new IllegalArgumentException("Size must be between 1 and 100");
+        }
+        log.info("Searching for users with profile name: {}", profileName);
+        return userReadService.searchUsers(profileName, page - 1, size);
     }
 }

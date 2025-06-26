@@ -21,6 +21,7 @@ import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.User.repository.UserRepository;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
 import skillspace.skillspace_backend.User.specification.UserSpecification;
+import skillspace.skillspace_backend.shared.response.PagingDTO;
 import skillspace.skillspace_backend.shared.security.service.SecurityService;
 
 @Service
@@ -54,7 +55,7 @@ public class UserReadServiceImpl implements UserReadService {
         return profile;
     }
 
-    public List<BaseUserBrief> getFollowingCompanies(int page, int size) {
+    public PagingDTO<BaseUserBrief> getFollowingCompanies(int page, int size) {
         UUID currentUserId = securityService.getCurrentBaseUserId();
         Pageable pageable = PageRequest.of(page, size);
         List<Company> followingCompanies = userRepository.findFollowingCompanies(currentUserId, pageable);
@@ -65,14 +66,18 @@ public class UserReadServiceImpl implements UserReadService {
             log.info("Found {} following companies for user with id: {}", followingCompanies.size(), currentUserId);
         }
 
-        List<BaseUserBrief> response = followingCompanies.stream()
-            .map(BaseUserMapper::toBaseUserBrief)
-            .toList();
-        
-        return response;
+        return new PagingDTO<>(
+            followingCompanies.stream()
+                .map(BaseUserMapper::toBaseUserBrief)
+                .toList(),
+            page,
+            size,
+            followingCompanies.size(),
+            (int) Math.ceil((double) followingCompanies.size() / size)
+        );
     }
 
-    public List<BaseUserBrief> getConnections(int page, int size) {
+    public PagingDTO<BaseUserBrief> getConnections(int page, int size) {
         UUID currentUserId = securityService.getCurrentBaseUserId();
         Pageable pageable = PageRequest.of(page, size);
         List<User> connections = userRepository.findConnections(currentUserId, pageable);
@@ -83,18 +88,22 @@ public class UserReadServiceImpl implements UserReadService {
             log.info("Found {} connections for user with id: {}", connections.size(), currentUserId);
         }
 
-        List<BaseUserBrief> response = connections.stream()
-            .map(BaseUserMapper::toBaseUserBrief)
-            .toList();
-        
-        return response;
-    } 
+        return new PagingDTO<>(
+            connections.stream()
+                .map(BaseUserMapper::toBaseUserBrief)
+                .toList(),
+            page,
+            size,
+            connections.size(),
+            (int) Math.ceil((double) connections.size() / size)
+        );
+    }
 
-    public List<BaseUserBrief> searchUsers(String profileName, int page, int size) {
+    public PagingDTO<BaseUserBrief> searchUsers(String profileName, int page, int size) {
         profileName = safeTrim(profileName);
         if (profileName == null || profileName.isEmpty()) {
             log.info("Search profile name is empty or null, returning empty list.");
-            return List.of();
+            return new PagingDTO<>(List.of(), page, size, 0, 0);
         }
         log.info("Searching users with profile name: {}", profileName);
         Specification<User> spec = UserSpecification.fullTextSearchProfileName(profileName);
@@ -107,11 +116,15 @@ public class UserReadServiceImpl implements UserReadService {
             log.info("Found {} users with profile name: {}", users.size(), profileName);
         }
 
-        List<BaseUserBrief> response = users.stream()
-            .map(BaseUserMapper::toBaseUserBrief)
-            .toList();
-        
-        return response;
+        return new PagingDTO<>(
+            users.stream()
+                .map(BaseUserMapper::toBaseUserBrief)
+                .toList(),
+            page,
+            size,
+            users.size(),
+            (int) Math.ceil((double) users.size() / size)
+        );
     }
 
     private String safeTrim(String str) {

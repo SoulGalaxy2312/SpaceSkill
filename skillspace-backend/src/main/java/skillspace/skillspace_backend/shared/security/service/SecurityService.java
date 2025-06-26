@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import skillspace.skillspace_backend.BaseUser.model.BaseUser;
+import skillspace.skillspace_backend.BaseUser.repository.BaseUserRepository;
 import skillspace.skillspace_backend.Company.model.Company;
 import skillspace.skillspace_backend.Company.repository.CompanyRepository;
 import skillspace.skillspace_backend.User.model.User;
@@ -17,10 +18,16 @@ import skillspace.skillspace_backend.User.repository.UserRepository;
 public class SecurityService {
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
+    private final BaseUserRepository baseUserRepository;
 
-    public SecurityService(UserRepository userRepository, CompanyRepository companyRepository) {
+    public SecurityService(
+        UserRepository userRepository, 
+        CompanyRepository companyRepository,
+        BaseUserRepository baseUserRepository) {
+
         this.userRepository = userRepository;
         this.companyRepository = companyRepository;
+        this.baseUserRepository = baseUserRepository;
     }
 
     private String getAuthenticationEmail() {
@@ -48,21 +55,16 @@ public class SecurityService {
             return null;
 
         String email = getAuthenticationEmail();
-        if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_COMPANY"))) {
-            return companyRepository.getCompanyByEmailOrThrow(email); // returns Company, which extends BaseUser
-        } else if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
-            return userRepository.getUserByEmailOrThrow(email); // returns User, which extends BaseUser
-        }
-        return null;
-    }
-
-    public boolean assertCurrentUserMatches(UUID id) {
-        BaseUser currentBaseUser = getCurrentBaseUser();
-        return (currentBaseUser != null) && id.equals(currentBaseUser.getId());
+        return baseUserRepository.findByEmailOrThrow(email);
     }
 
     public UUID getCurrentBaseUserId() {
         BaseUser currentBaseUser = getCurrentBaseUser();
         return (currentBaseUser == null) ? null : currentBaseUser.getId();
     }
+
+    public boolean assertCurrentUserMatches(UUID id) {
+        BaseUser currentBaseUser = getCurrentBaseUser();
+        return (currentBaseUser != null) && id.equals(currentBaseUser.getId());
+    }    
 }

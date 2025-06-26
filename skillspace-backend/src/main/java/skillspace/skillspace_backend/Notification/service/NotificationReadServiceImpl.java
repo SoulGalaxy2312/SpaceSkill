@@ -12,6 +12,7 @@ import skillspace.skillspace_backend.Notification.model.Notification;
 import skillspace.skillspace_backend.Notification.repository.NotificationRepository;
 import skillspace.skillspace_backend.Notification.response.NotificationResponseDTO;
 import skillspace.skillspace_backend.User.model.User;
+import skillspace.skillspace_backend.shared.response.PagingDTO;
 import skillspace.skillspace_backend.shared.security.service.SecurityService;
 
 @Service
@@ -24,16 +25,18 @@ public class NotificationReadServiceImpl implements NotificationReadService {
         this.securityService = securityService;
     }
     
-    public Page<NotificationResponseDTO> getNotifications(int page, int size) throws IllegalArgumentException {
+    public PagingDTO<NotificationResponseDTO> getNotifications(int page, int size) throws IllegalArgumentException {
         User user = securityService.getCurrentUser();
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        if (page < 0 || page >= pageable.getPageSize()) {
-            throw new IllegalArgumentException("The page is not accepted");
-        }
-
         Page<Notification> notifications = notificationRepository.findAllByRecipientIdOrderByCreatedAtDesc(user.getId(), pageable);
 
         Page<NotificationResponseDTO> response = notifications.map(NotificationMapper::toNotificationResponseDTO);
-        return response;
+        return new PagingDTO<>(
+            response.getContent(),
+            response.getNumber(),
+            response.getSize(),
+            response.getTotalElements(),
+            response.getTotalPages()
+        );
     }
 }

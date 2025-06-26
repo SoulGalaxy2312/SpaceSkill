@@ -1,9 +1,8 @@
 package skillspace.skillspace_backend.Notification.service;
 
-import org.springframework.data.domain.Page;
-
 import skillspace.skillspace_backend.Notification.response.NotificationResponseDTO;
+import skillspace.skillspace_backend.shared.response.PagingDTO;
 
 public interface NotificationReadService {
-    Page<NotificationResponseDTO> getNotifications(int page, int size) throws IllegalArgumentException;
+    PagingDTO<NotificationResponseDTO> getNotifications(int page, int size) throws IllegalArgumentException;
 }

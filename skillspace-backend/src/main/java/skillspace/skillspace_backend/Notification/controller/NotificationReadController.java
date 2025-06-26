@@ -5,8 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import skillspace.skillspace_backend.Notification.response.NotificationResponseDTO;
 import skillspace.skillspace_backend.Notification.service.NotificationReadService;
 import skillspace.skillspace_backend.shared.constants.ApiPath;
-
-import java.util.List;
+import skillspace.skillspace_backend.shared.response.PagingDTO;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,11 +22,17 @@ public class NotificationReadController {
     
     @GetMapping(ApiPath.NOTIFICATION + "/notifications")
     @PreAuthorize("hasRole('USER')")
-    public List<NotificationResponseDTO> getNotifications(
+    public PagingDTO<NotificationResponseDTO> getNotifications(
         @RequestParam(name = "page", required = false ,defaultValue = "0") int page,
         @RequestParam(name = "size", required = false ,defaultValue = "10") int size
     ) {
-        return notificationReadService.getNotifications(page, size).getContent();
+        if (page < 1) {
+            throw new IllegalArgumentException("Page number must be greater than or equal to 1");
+        }
+        if (size < 1 || size > 100) {
+            throw new IllegalArgumentException("Size must be between 1 and 100");
+        }
+        return notificationReadService.getNotifications(page - 1, size);
     }
     
 }

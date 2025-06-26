@@ -3,6 +3,8 @@ package skillspace.skillspace_backend.Company.repository;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import jakarta.transaction.Transactional;
 import skillspace.skillspace_backend.Company.exception.CompanyNotFoundException;
 import skillspace.skillspace_backend.Company.model.Company;
+import skillspace.skillspace_backend.User.model.User;
 
 @Repository
 public interface CompanyRepository extends JpaRepository<Company, UUID>{   
@@ -50,4 +53,14 @@ public interface CompanyRepository extends JpaRepository<Company, UUID>{
         nativeQuery = true
     )
     int removeRecruiter(UUID companyId, UUID recruiterId);
+
+    @Query(
+        value = """
+                    SELECT u 
+                    FROM COMPANY c 
+                    JOIN c.recruiters u 
+                    WHERE c.id = :companyId
+                """
+    )
+    Page<User> findRecruitersByCompanyId(UUID companyId, Pageable pageable);
 }

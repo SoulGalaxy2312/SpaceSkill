@@ -1,7 +1,8 @@
 package skillspace.skillspace_backend.Job.service;
 
-import java.util.List;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import skillspace.skillspace_backend.Job.repository.JobRepository;
 import skillspace.skillspace_backend.Job.request.JobSearchRequestDTO;
 import skillspace.skillspace_backend.Job.response.JobResponseDTO;
 import skillspace.skillspace_backend.Job.specification.JobSpecification;
+import skillspace.skillspace_backend.shared.response.PagingDTO;
 
 @Service
 public class JobReadServiceImpl implements JobReadService {
@@ -22,7 +24,7 @@ public class JobReadServiceImpl implements JobReadService {
     }
 
     @Override
-    public List<JobResponseDTO> searchJobs(JobSearchRequestDTO jobSearchRequestDTO, int page, int size) {
+    public PagingDTO<JobResponseDTO> searchJobs(JobSearchRequestDTO jobSearchRequestDTO, int page, int size) {
         String title = safeTrim(jobSearchRequestDTO.getTitle());
         String location = safeTrim(jobSearchRequestDTO.getLocation());
         String skill = safeTrim(jobSearchRequestDTO.getSkill());
@@ -43,10 +45,16 @@ public class JobReadServiceImpl implements JobReadService {
         }
         spec = spec.and(JobSpecification.sortByCreatedAtDesc());
         Pageable pageable = Pageable.ofSize(size).withPage(page);
-        List<Job> jobs = jobRepository.findAll(spec, pageable).getContent();
-        return jobs.stream()
-            .map(JobMapper::toJobResponseDTO)
-            .toList();
+        Page<Job> jobs = jobRepository.findAll(spec, pageable);
+        return new PagingDTO<>(
+            jobs.getContent().stream()
+                .map(JobMapper::toJobResponseDTO)
+                .collect(Collectors.toList()),
+            jobs.getNumber(),
+            jobs.getSize(),
+            jobs.getTotalElements(),
+            jobs.getTotalPages()
+        );
     }
     
     private String safeTrim(String input) {

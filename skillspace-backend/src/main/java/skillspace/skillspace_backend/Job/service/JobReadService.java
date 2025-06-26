@@ -1,10 +1,9 @@
 package skillspace.skillspace_backend.Job.service;
 
-import java.util.List;
-
 import skillspace.skillspace_backend.Job.request.JobSearchRequestDTO;
 import skillspace.skillspace_backend.Job.response.JobResponseDTO;
+import skillspace.skillspace_backend.shared.response.PagingDTO;
 
 public interface JobReadService {
-    List<JobResponseDTO> searchJobs(JobSearchRequestDTO jobSearchRequestDTO, int page, int size);
+    PagingDTO<JobResponseDTO> searchJobs(JobSearchRequestDTO jobSearchRequestDTO, int page, int size);
 }
