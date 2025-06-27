@@ -1,0 +1,1 @@
+// User FollowingCompaniesPage component
