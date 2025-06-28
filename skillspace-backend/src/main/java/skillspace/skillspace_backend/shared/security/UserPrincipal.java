@@ -16,6 +16,10 @@ public class UserPrincipal implements UserDetails {
         this.user = user;
     }
 
+    public BaseUser getUser() {
+        return this.user;
+    }
+
     public String getUsername() {
         return user.getEmail();
     }

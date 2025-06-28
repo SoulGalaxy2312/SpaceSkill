@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.extern.slf4j.Slf4j;
 import skillspace.skillspace_backend.auth.request.LoginDTO;
 import skillspace.skillspace_backend.auth.request.RegisterDTO;
-import skillspace.skillspace_backend.auth.response.JwtAuthenticationResponse;
+import skillspace.skillspace_backend.auth.response.LoginSuccessDTO;
 import skillspace.skillspace_backend.auth.service.AuthService;
 import skillspace.skillspace_backend.shared.constants.ApiPath;
 import skillspace.skillspace_backend.shared.response.StatusResponseDTO;
@@ -28,11 +28,9 @@ public class AuthController {
     }
 
     @PostMapping(ApiPath.AUTH + "/login")
-    public JwtAuthenticationResponse login(@RequestBody LoginDTO logInDTO) {
+    public LoginSuccessDTO login(@RequestBody LoginDTO logInDTO) {
         log.info("Log in user with email: {}", logInDTO.email());
-        String token = authService.login(logInDTO);
-        log.info("Successfully login for user with email: {}", logInDTO.email());
-        return new JwtAuthenticationResponse(token);
+        return authService.login(logInDTO);
     }
     
 }

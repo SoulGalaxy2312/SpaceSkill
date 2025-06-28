@@ -1,9 +1,11 @@
 package skillspace.skillspace_backend.auth.service;
 
+import skillspace.skillspace_backend.shared.security.UserPrincipal;
 import java.util.Optional;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ import skillspace.skillspace_backend.User.repository.UserRepository;
 import skillspace.skillspace_backend.auth.exception.EmailAlreadyUsedException;
 import skillspace.skillspace_backend.auth.request.LoginDTO;
 import skillspace.skillspace_backend.auth.request.RegisterDTO;
+import skillspace.skillspace_backend.auth.response.LoginSuccessDTO;
 import skillspace.skillspace_backend.shared.response.StatusResponseDTO;
 import skillspace.skillspace_backend.shared.security.jwt.JwtTokenProvider;
 
@@ -77,13 +80,19 @@ public class AuthServiceImpl implements AuthService {
         return new StatusResponseDTO(true, "Registration successful");
     }
 
-    public String login(LoginDTO dto) {
-        authenticationManager
+    public LoginSuccessDTO login(LoginDTO dto) {
+        Authentication auth = authenticationManager
             .authenticate(
                 new UsernamePasswordAuthenticationToken(
                     dto.email(),
                     dto.password()));
         
-        return jwtTokenProvider.generateToken(dto.email());
+        UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+        BaseUser user = userPrincipal.getUser();
+        log.info("User with email {} logs in successfully", user.getEmail());
+        return new LoginSuccessDTO(
+            jwtTokenProvider.generateToken(user.getEmail()),
+            user.getId()
+        );
     }
 }
