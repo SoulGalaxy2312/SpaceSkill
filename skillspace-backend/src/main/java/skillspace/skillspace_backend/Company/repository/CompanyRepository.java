@@ -57,7 +57,7 @@ public interface CompanyRepository extends JpaRepository<Company, UUID>{
     @Query(
         value = """
                     SELECT u 
-                    FROM COMPANY c 
+                    FROM Company c 
                     JOIN c.recruiters u 
                     WHERE c.id = :companyId
                 """
