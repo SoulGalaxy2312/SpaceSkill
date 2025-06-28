@@ -18,11 +18,20 @@ export default function HomePage() {
             Join <span className="text-blue-500 font-semibold">SkillSpace</span> to connect with top employers and grow your career.
           </p>
           <div className="flex space-x-4">
+            {/* Nút đăng ký */}
             <Link
               to="/register"
               className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition"
             >
               Get Started
+            </Link>
+
+            {/* Nút đăng nhập */}
+            <Link
+              to="/login"
+              className="border border-blue-500 text-blue-500 px-6 py-3 rounded-md hover:bg-blue-600 hover:text-white transition"
+            >
+              Log in
             </Link>
           </div>
         </div>

@@ -1,1 +1,0 @@
-// Company RecruitersPage component
