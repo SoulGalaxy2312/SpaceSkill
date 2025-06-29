@@ -3,7 +3,8 @@ import { Routes, Route } from 'react-router-dom'
 import RegisterPage from '../pages/auth/RegisterPage.jsx'
 import LoginPage from '../pages/auth/LoginPage.jsx'
 import Home from '../pages/Home.jsx'
-import { Navigate } from 'react-router-dom'
+import UserProfilePage from '../pages/profile/UserProfilePage.jsx'
+import CompanyProfilePage from '../pages/profile/CompanyProfilePage.jsx'
 
 function App() {
   return (
@@ -15,6 +16,10 @@ function App() {
 
         {/* Home sau khi đăng nhập */}
         <Route path="/home" element={<Home />}/>
+
+        {/* Profile */}
+        <Route path="/users/profile/:id" element={<UserProfilePage />} />
+        <Route path="/companies/profile/:id" element={<CompanyProfilePage />} />
       </Routes>
     </>
   )

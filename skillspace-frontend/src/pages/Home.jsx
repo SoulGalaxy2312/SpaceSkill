@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogOut, User } from "lucide-react"; // dùng icon đẹp từ lucide-react
-import { clearAppStorage } from "../utils/localStorages";
+import NavBar from "../components/NavBar";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -29,31 +28,11 @@ export default function Home() {
     navigate(url);
   };
 
-  const handleLogout = () => {
-    clearAppStorage();
-    navigate("/");
-  };
+  
 
   return (
     <div className="min-h-screen bg-gray-900 text-white relative">
-      {/* 🔝 Navigation Icons */}
-      <div className="absolute top-4 right-6 flex items-center gap-4">
-        <button
-          onClick={() => navigate("/profile")}
-          className="hover:text-indigo-400 transition"
-          title="Profile"
-        >
-          <User size={24} />
-        </button>
-        <button
-          onClick={handleLogout}
-          className="hover:text-red-400 transition"
-          title="Logout"
-        >
-          <LogOut size={24} />
-        </button>
-      </div>
-
+      <NavBar />
       {/* 🔍 Main Search Section */}
       <div className="flex items-center justify-center px-4 min-h-screen">
         <div className="w-full max-w-2xl space-y-8 text-center">
