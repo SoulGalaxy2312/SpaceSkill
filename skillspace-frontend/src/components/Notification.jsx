@@ -1,10 +1,5 @@
-import { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import {
-    markNotificationAsRead,
-    deleteNotification,
-} from "../api/notificationApi"
 import { getDefaultAvatar } from "../utils/avatar";
 import { useNavigate } from "react-router-dom";
 
@@ -20,31 +15,6 @@ export default function Notification({ data, onRead, onDelete }) {
 
     const avatarUrl = getDefaultAvatar(role);
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
-
-    const handleMarkAsRead = async () => {
-        if (isRead) return;
-        try {
-            setLoading(true)
-            await markNotificationAsRead(id);
-        } catch (err) {
-            console.error("Failed to mark as read:", err);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleDelete = async () => {
-    try {
-            setLoading(true);
-            await deleteNotification(id);
-            onDelete(id);
-        } catch (err) {
-            console.error("Failed to delete notification:", err);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleGoToProfile = () => {
         const path = role === "COMPANY"
@@ -74,7 +44,7 @@ export default function Notification({ data, onRead, onDelete }) {
             className={`flex-1 p-2 rounded-md transition cursor-pointer ${
                 isRead ? "bg-gray-800" : "bg-gray-700"
             } hover:bg-gray-600`}
-            onClick={handleMarkAsRead}
+            onClick={() => onRead(id)}
             >
             <div className="text-sm font-semibold text-white mb-0.5">{title}</div>
             <div className="text-sm text-gray-300 line-clamp-2">{message}</div>
@@ -90,11 +60,10 @@ export default function Notification({ data, onRead, onDelete }) {
             <button
             onClick={(e) => {
                 e.stopPropagation(); // prevent triggering read
-                handleDelete();
+                onDelete(id);
             }}
             className="text-gray-500 hover:text-red-400 transition ml-2 mt-1"
             title="Delete"
-            disabled={loading}
             >
             <Trash2 size={16} />
             </button>

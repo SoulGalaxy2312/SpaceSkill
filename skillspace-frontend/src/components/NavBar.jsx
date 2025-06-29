@@ -4,6 +4,9 @@ import { fetchNotifications } from "../api/notificationApi";
 import { LogOut, User, Bell } from "lucide-react";
 import { clearAppStorage } from "../utils/localStorages";
 import Notification from "./Notification"; // 👉 Import component mới
+import { 
+  markNotificationAsRead,
+  deleteNotification } from "../api/notificationApi";
 
 export default function NavBar() {
   const navigate = useNavigate();
@@ -18,6 +21,13 @@ export default function NavBar() {
   };
 
   const handleNotificationsClick = async () => {
+    // Nếu đang mở dropdown → đóng lại
+    if (showDropdown) {
+      setShowDropdown(false);
+      return;
+    }
+
+    // Nếu đang đóng dropdown → fetch và mở lên
     try {
       const res = await fetchNotifications(1); // reset page = 1
       setNotifications(res.content || []);
@@ -41,14 +51,25 @@ export default function NavBar() {
     }
   };
 
-  const handleMarkAsRead = (readId) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n.id === readId ? { ...n, isRead: true } : n))
-    );
+  const handleMarkAsRead = async (id) => {
+    try {
+      await markNotificationAsRead(id);
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === id ? {...n, isRead: true} : n))
+      );
+    } catch (error) {
+      console.error("Failed to mark notification as read", err);
+    }
   };
 
-  const handleDelete = (deletedId) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== deletedId));
+  const handleDelete = async (id) => {
+    try {
+      await deleteNotification(id);
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+    } catch (error) {
+      console.error("Failed to delete notification", err);
+    }
+    
   };
 
   return (

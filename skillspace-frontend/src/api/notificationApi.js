@@ -16,18 +16,20 @@ export const markNotificationAsRead = async (id) => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) throw new Error("JWT is missing");
 
-    await axiosInstance.post(`/notifications/${id}/mark-read`, null, {
+    const res = await axiosInstance.put(`/notifications/${id}/mark-read`, null, {
         headers: { Authorization: `Bearer ${jwt}` },
     });
+    console.log(res);
 };
 
 export const deleteNotification = async (id) => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) throw new Error("JWT is missing");
 
-    await axiosInstance.delete(`/notifications/${id}`, {
+    const res = await axiosInstance.delete(`/notifications/${id}`, {
         headers: { Authorization: `Bearer ${jwt}` },
     });
+    console.log(res);
 };
 
 
