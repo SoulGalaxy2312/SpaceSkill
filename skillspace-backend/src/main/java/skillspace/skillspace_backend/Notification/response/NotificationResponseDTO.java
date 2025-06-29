@@ -1,5 +1,6 @@
 package skillspace.skillspace_backend.Notification.response;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import skillspace.skillspace_backend.BaseUser.response.BaseUserBrief;
@@ -10,7 +11,7 @@ public record NotificationResponseDTO(
     String message,
     BaseUserBrief sender,
     boolean isRead,
-    String url
+    LocalDateTime createdAt
 ) {
     
 }

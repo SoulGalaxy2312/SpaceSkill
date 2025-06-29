@@ -29,17 +29,12 @@ public class NotificationWriteServiceImpl implements NotificationWriteService {
     public void sendNotification(BaseUser sender, User recipient, Job job) {        
         Notification notification = new Notification();
         String jobPostingTitle = getJobPostingTitle(sender.getProfileName(), job.getTitle());
+        
         notification.setTitle(jobPostingTitle);
 
-        notification.setSenderId(sender.getId());
-        notification.setSenderProfileName(sender.getProfileName());
-        notification.setSenderRole(sender.getRole());
+        notification.setSender(sender);
+        notification.setRecipient(recipient);
 
-        notification.setRecipientId(recipient.getId());
-        notification.setRecipientRole(recipient.getRole());
-        notification.setRecipientProfileName(recipient.getProfileName());
-        
-        notification.setJob(job);
         notification.setRead(false);
 
         notificationRepository.save(notification);
@@ -53,15 +48,9 @@ public class NotificationWriteServiceImpl implements NotificationWriteService {
             String jobPostingTitle = getJobPostingTitle(sender.getProfileName(), job.getTitle());
             notification.setTitle(jobPostingTitle);
 
-            notification.setSenderId(sender.getId());
-            notification.setSenderProfileName(sender.getProfileName());
-            notification.setSenderRole(sender.getRole());
+            notification.setSender(sender);
+            notification.setRecipient(recipient);
 
-            notification.setRecipientId(recipient.getId());
-            notification.setRecipientProfileName(recipient.getProfileName());
-            notification.setRecipientRole(recipient.getRole());
-
-            notification.setJob(job);
             notification.setRead(false);
 
             notificationRepository.save(notification);

@@ -20,10 +20,10 @@ public class NotificationReadController {
         this.notificationReadService = notificationReadService;
     } 
     
-    @GetMapping(ApiPath.NOTIFICATION + "/notifications")
+    @GetMapping(ApiPath.NOTIFICATION)
     @PreAuthorize("hasRole('USER')")
     public PagingDTO<NotificationResponseDTO> getNotifications(
-        @RequestParam(name = "page", required = false ,defaultValue = "0") int page,
+        @RequestParam(name = "page", required = false ,defaultValue = "1") int page,
         @RequestParam(name = "size", required = false ,defaultValue = "10") int size
     ) {
         if (page < 1) {

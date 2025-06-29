@@ -1,6 +1,6 @@
 package skillspace.skillspace_backend.Notification.mapper;
 
-import skillspace.skillspace_backend.BaseUser.response.BaseUserBrief;
+import skillspace.skillspace_backend.BaseUser.mapper.BaseUserMapper;
 import skillspace.skillspace_backend.Notification.model.Notification;
 import skillspace.skillspace_backend.Notification.response.NotificationResponseDTO;
 
@@ -11,13 +11,9 @@ public class NotificationMapper {
             entity.getId(),
             entity.getTitle(),
             entity.getMessage(),
-            new BaseUserBrief(
-                entity.getSenderId(),
-                entity.getSenderProfileName(),
-                entity.getSenderRole()
-            ),
+            BaseUserMapper.toBaseUserBrief(entity.getSender()),
             entity.isRead(),
-            entity.getUrl()
+            entity.getCreatedAt()
         );
     }
 }
