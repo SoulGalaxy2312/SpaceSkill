@@ -36,11 +36,14 @@ export default function LoginPage() {
         password: formData.password,
       });
 
-      console.log(res);
+      console.log("JWT: " + res.jwtToken);
+      console.log("CurrentUserId: " + res.currentUserId);
+      console.log("ROLE: " + res.role);
 
       Object.entries({
         jwt: res.jwtToken,
-        currentUserId: res.currentUserId
+        currentUserId: res.currentUserId,
+        role: res.role
       }).forEach(([key, value]) => setAppItem(key, value));
 
       navigate("/home"); // điều hướng về trang chủ

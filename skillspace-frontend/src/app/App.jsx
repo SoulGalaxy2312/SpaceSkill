@@ -4,7 +4,7 @@ import RegisterPage from '../pages/auth/RegisterPage.jsx'
 import LoginPage from '../pages/auth/LoginPage.jsx'
 import Home from '../pages/Home.jsx'
 import UserProfilePage from '../pages/profile/UserProfilePage.jsx'
-import CompanyProfilePage from '../pages/profile/CompanyProfilePage.jsx'
+import CompanyProfilePage from '../pages/profile/company/CompanyProfilePage.jsx'
 
 function App() {
   return (

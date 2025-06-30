@@ -1,4 +1,4 @@
-const APP_KEYS = ["jwt", "currentUserId"]; 
+const APP_KEYS = ["jwt", "currentUserId", "role"]; 
 
 export const clearAppStorage = () => {
   APP_KEYS.forEach((key) => localStorage.removeItem(key));

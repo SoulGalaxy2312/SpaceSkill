@@ -16,7 +16,7 @@ export const markNotificationAsRead = async (id) => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) throw new Error("JWT is missing");
 
-    const res = await axiosInstance.put(`/notifications/${id}/mark-read`, null, {
+    const res = await axiosInstance.put(`/notifications/${id}/mark-read`, {
         headers: { Authorization: `Bearer ${jwt}` },
     });
     console.log(res);

@@ -31,8 +31,10 @@ export default function Home() {
   
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white relative">
+    <>
       <NavBar />
+      <div className="min-h-screen bg-gray-900 text-white relative">
+      
       {/* 🔍 Main Search Section */}
       <div className="flex items-center justify-center px-4 min-h-screen">
         <div className="w-full max-w-2xl space-y-8 text-center">
@@ -82,5 +84,7 @@ export default function Home() {
         </div>
       </div>
     </div>
+    </>
+    
   );
 }

@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchNotifications } from "../api/notificationApi";
-import { LogOut, User, Bell } from "lucide-react";
-import { clearAppStorage } from "../utils/localStorages";
-import Notification from "./Notification"; // 👉 Import component mới
+import { Rocket, LogOut, User, Bell } from "lucide-react";
+import { 
+  clearAppStorage,
+  getAppItem } from "../utils/localStorages";
+import Notification from "./Notification";
 import { 
   markNotificationAsRead,
   deleteNotification } from "../api/notificationApi";
@@ -72,70 +74,94 @@ export default function NavBar() {
     
   };
 
-  return (
-    <div className="absolute top-4 right-6 flex items-center gap-4 z-50">
-      <button
-        onClick={() => navigate("/profile")}
-        className="hover:text-indigo-400 transition"
-        title="Profile"
-      >
-        <User size={24} />
-      </button>
+  const handleNavigateProfile = () => {
+    const role = getAppItem("role")
+    const id = getAppItem("currentUserId")
 
-      {/* Notifications */}
-      <div className="relative">
+    const path = role === "COMPANY" 
+    ? `/companies/profile/${id}`
+    : `/users/profile/${id}`
+
+    console.log(`Navigate to ${path}`)
+    navigate(path);
+  }
+
+  return (
+    <>
+      <div className="fixed top-0 h-16 left-0 w-full flex items-center justify-between px-6 z-50 bg-gray-900 bg-opacity-95">
+        {/* Logo at far left */}
         <button
-          onClick={handleNotificationsClick}
-          className="hover:text-yellow-400 transition"
-          title="Notifications"
+          onClick={() => navigate("/home")}
+          className="flex items-center gap-2 px-2 py-1 rounded-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:to-pink-600 transition shadow-lg"
+          title="Go to Home"
         >
-          <Bell size={24} />
+          <Rocket size={16} className="text-white drop-shadow" />
+          <span className="font-extrabold text-sm text-white tracking-wide drop-shadow">SkillSpace</span>
         </button>
 
-        {/* Dropdown */}
-        {showDropdown && (
-          <div className="absolute right-0 mt-2 w-80 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50">
-            <div className="p-3 text-sm font-semibold text-indigo-400">
-              Notifications
-            </div>
-            <ul className="max-h-64 overflow-y-auto divide-y divide-gray-700">
-              {notifications.length > 0 ? (
-                notifications.map((notif) => (
-                  <Notification
-                    key={notif.id}
-                    data={notif}
-                    onRead={handleMarkAsRead}
-                    onDelete={handleDelete}
-                  />
-                ))
-              ) : (
-                <li className="px-4 py-2 text-sm text-gray-400">
-                  No notifications
-                </li>
-              )}
-            </ul>
+        {/* Icons at far right */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => handleNavigateProfile()}
+            className="hover:text-indigo-400 transition"
+            title="Profile"
+          >
+            <User size={24} className="text-white"/>
+          </button>
 
-            {/* Show More */}
-            {hasNext && (
-              <button
-                onClick={loadMoreNotifications}
-                className="w-full text-center text-indigo-400 hover:text-indigo-300 text-sm py-2 border-t border-gray-700"
-              >
-                Show More
-              </button>
+          <div className="relative">
+            <button
+              onClick={handleNotificationsClick}
+              className="hover:text-yellow-400 transition"
+              title="Notifications"
+            >
+              <Bell size={24} className="text-white"/>
+            </button>
+            {/* Dropdown */}
+            {showDropdown && (
+              <div className="absolute right-0 mt-2 w-80 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50">
+                <div className="p-3 text-sm font-semibold text-indigo-400">
+                  Notifications
+                </div>
+                <ul className="max-h-64 overflow-y-auto divide-y divide-gray-700">
+                  {notifications.length > 0 ? (
+                    notifications.map((notif) => (
+                      <Notification
+                        key={notif.id}
+                        data={notif}
+                        onRead={handleMarkAsRead}
+                        onDelete={handleDelete}
+                      />
+                    ))
+                  ) : (
+                    <li className="px-4 py-2 text-sm text-gray-400">
+                      No notifications
+                    </li>
+                  )}
+                </ul>
+                {hasNext && (
+                  <button
+                    onClick={loadMoreNotifications}
+                    className="w-full text-center text-indigo-400 hover:text-indigo-300 text-sm py-2 border-t border-gray-700"
+                  >
+                    Show More
+                  </button>
+                )}
+              </div>
             )}
           </div>
-        )}
-      </div>
 
-      {/* Logout */}
-      <button
-        onClick={handleLogout}
-        className="hover:text-red-400 transition"
-        title="Logout"
-      >
-        <LogOut size={24} />
-      </button>
-    </div>
+          <button
+            onClick={handleLogout}
+            className="hover:text-red-400 transition"
+            title="Logout"
+          >
+            <LogOut size={24} className="text-white" />
+          </button>
+        </div>
+      </div>
+      {/* Spacer to push content below the NavBar */}
+      <div className="h-16" />
+    </>
   );
 }
