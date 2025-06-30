@@ -9,6 +9,7 @@ import Notification from "./Notification";
 import { 
   markNotificationAsRead,
   deleteNotification } from "../api/notificationApi";
+import axiosInstance from "../api/axiosInstance";
 
 export default function NavBar() {
   const navigate = useNavigate();
@@ -17,9 +18,18 @@ export default function NavBar() {
   const [page, setPage] = useState(1);
   const [hasNext, setHasNext] = useState(false);
 
-  const handleLogout = () => {
-    clearAppStorage();
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      const jwt = localStorage.getItem("jwt");
+      await axiosInstance.get("/auth/logout", {
+        headers: { Authorization: `Bearer ${jwt}` }
+      });
+    } catch (error) {
+      console.log("Error logout");
+    } finally {
+      clearAppStorage();
+      navigate("/");
+    }
   };
 
   const handleNotificationsClick = async () => {
