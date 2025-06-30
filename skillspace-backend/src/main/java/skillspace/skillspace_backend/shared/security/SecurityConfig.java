@@ -1,7 +1,6 @@
 package skillspace.skillspace_backend.shared.security;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +28,6 @@ import skillspace.skillspace_backend.shared.security.jwt.JwtFilter;
 public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final JwtFilter jwtAuthenticationFilter;
-    private final String clientDomain = "http://localhost:5173"; 
 
     public SecurityConfig(UserDetailsService userDetailSerice, JwtFilter jwtFilter) {
         this.userDetailsService = userDetailSerice;
@@ -50,6 +48,7 @@ public class SecurityConfig {
                     .requestMatchers(ApiPath.JOB + "/**").authenticated()
                     .requestMatchers(ApiPath.COMPANY + "/**").authenticated()
                     .requestMatchers(ApiPath.APPLICATION + "/**").authenticated()
+                    .requestMatchers(ApiPath.BASE_USER + "/**").authenticated()
                     .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -72,13 +71,16 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Collections.singletonList(clientDomain));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-        configuration.setAllowCredentials(true);
+        CorsConfiguration config = new CorsConfiguration();
+        
+        config.addAllowedOrigin("http://localhost:5173");
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.setExposedHeaders(List.of("Authorization", "Content-Type"));
+        config.setAllowCredentials(true); 
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/**", config);
         return source;
     }
 }
