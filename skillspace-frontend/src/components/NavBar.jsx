@@ -79,8 +79,8 @@ export default function NavBar() {
     const id = getAppItem("currentUserId")
 
     const path = role === "COMPANY" 
-    ? `/companies/profile/${id}`
-    : `/users/profile/${id}`
+    ? `/companies/${id}/profile`
+    : `/users/${id}/profile`
 
     console.log(`Navigate to ${path}`)
     navigate(path);

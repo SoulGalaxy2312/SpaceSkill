@@ -18,8 +18,8 @@ function App() {
         <Route path="/home" element={<Home />}/>
 
         {/* Profile */}
-        <Route path="/users/profile/:id" element={<UserProfilePage />} />
-        <Route path="/companies/profile/:id" element={<CompanyProfilePage />} />
+        <Route path="/users/:id/profile" element={<UserProfilePage />} />
+        <Route path="/companies/:id/profile" element={<CompanyProfilePage />} />
       </Routes>
     </>
   )

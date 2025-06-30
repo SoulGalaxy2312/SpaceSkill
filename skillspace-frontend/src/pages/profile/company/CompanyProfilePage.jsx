@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../../api/axiosInstance";
 import { getDefaultAvatar } from "../../../utils/avatar";
-import EditCompanyModal from "../../../components/EditCompanyModal";
+import EditProfileModal from "../../../components/EditProfileModal";
 import JobCard from "../../../components/JobCard";
 import { fetchCompanyProfile } from "../../../api/companyApi";
 import NavBar from "../../../components/NavBar"
+import { getAppItem } from "../../../utils/localStorages";
+
 export default function CompanyProfilePage() {
   const { id } = useParams();
   const [company, setCompany] = useState(null);
@@ -32,7 +34,11 @@ export default function CompanyProfilePage() {
     if (activeTab === "jobs") {
       const fetchJobs = async () => {
         try {
-          const res = await axiosInstance.get(`/companies/${id}/jobs`);
+          const jwt = getAppItem("jwt")
+          const res = await axiosInstance.get(`/jobs/companies/${id}`, {
+            headers: { Authorization: `Bearer ${jwt}` },
+          });
+          console.log(res.data);
           setJobs(res.data);
         } catch (err) {
           console.error("Failed to fetch jobs", err);
@@ -102,6 +108,7 @@ export default function CompanyProfilePage() {
           >
             Overview
           </button>
+          
           <button
             onClick={() => setActiveTab("jobs")}
             className={`px-4 py-2 font-medium transition ${
@@ -117,9 +124,9 @@ export default function CompanyProfilePage() {
           {activeTab === "overview" ? (
             <p className="text-gray-300 whitespace-pre-wrap">{company.about}</p>
           ) : (
-            jobs.length > 0 ? (
+            jobs?.content?.length > 0 ? (
               <div className="space-y-4">
-                {jobs.map((job) => (
+                {jobs.content.map((job) => (
                   <JobCard key={job.id} job={job} />
                 ))}
               </div>
@@ -132,7 +139,7 @@ export default function CompanyProfilePage() {
 
       {/* Modal */}
       {company && (
-        <EditCompanyModal 
+        <EditProfileModal
           isOpen={editing}
           onClose={() => setEditing(false)} 
           company={company} 
