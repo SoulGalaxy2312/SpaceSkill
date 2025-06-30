@@ -19,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
@@ -30,7 +31,7 @@ public class UserWriteController {
     public UserWriteController(UserWriteService userWriteService) {
         this.userWriteService = userWriteService;
     }
-
+    
     /**
      * Experience section
      */
@@ -85,10 +86,17 @@ public class UserWriteController {
     /**
      * Follow section
      */
-    @PostMapping(ApiPath.USER + "/follow")
+    @PutMapping(ApiPath.USER + "/follow")
     @PreAuthorize("hasRole('USER')")
     public StatusResponseDTO follow(@RequestBody FollowRequestDTO dto) {
+        log.info("Attempting to follow BaseUser with id: {}", dto.targetId());
         return userWriteService.follow(dto);
     }
-    
+
+    @PutMapping(ApiPath.USER + "/unfollow")
+    @PreAuthorize("hasRole('USER')")
+    public StatusResponseDTO unfollow(@RequestBody FollowRequestDTO dto) {
+        log.info("Attempting to unfollow BaseUser with id: {}", dto.targetId());
+        return userWriteService.unfollow(dto);
+    }
 }

@@ -25,5 +25,6 @@ public interface UserWriteService {
     UserProfileDTO deleteSkill(String skill) throws JsonProcessingException;
 
     // Follow section
-    StatusResponseDTO follow(FollowRequestDTO followRequestDTO) throws IllegalArgumentException;
+    StatusResponseDTO follow(FollowRequestDTO followRequestDTO);
+    StatusResponseDTO unfollow(FollowRequestDTO followRequestDTO);
 }

@@ -6,6 +6,9 @@ public class ApiPath {
     // Auth APIs
     public static final String AUTH = API + "/auth";
 
+    // BaseUser APIs
+    public static final String BASE_USER = API + "/base-users";
+
     // User APIs
     public static final String USER = API + "/users";
 

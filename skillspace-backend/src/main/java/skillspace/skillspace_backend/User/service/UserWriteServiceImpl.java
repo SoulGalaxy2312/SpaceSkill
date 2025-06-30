@@ -136,9 +136,16 @@ public class UserWriteServiceImpl implements UserWriteService {
      * Follow section
      */
     @Transactional
-    public StatusResponseDTO follow(FollowRequestDTO dto) throws IllegalArgumentException {
+    public StatusResponseDTO follow(FollowRequestDTO dto) {
         User user = securityService.getCurrentUser();
         IFollowingMechanism mechanism = followingStrategyFactory.getStrategy(dto.targetType());
         return mechanism.follow(user, dto.targetId());
+    }
+
+    @Transactional
+    public StatusResponseDTO unfollow(FollowRequestDTO dto) {
+        User user = securityService.getCurrentUser();
+        IFollowingMechanism mechanism = followingStrategyFactory.getStrategy(dto.targetType());
+        return mechanism.unfollow(user, dto.targetId());
     }
 }

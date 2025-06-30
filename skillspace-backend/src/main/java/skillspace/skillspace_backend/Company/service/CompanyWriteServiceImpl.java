@@ -5,9 +5,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
-import skillspace.skillspace_backend.Company.model.Company;
 import skillspace.skillspace_backend.Company.repository.CompanyRepository;
-import skillspace.skillspace_backend.Company.request.UpdateCompanyProfileDTO;
 import skillspace.skillspace_backend.shared.response.StatusResponseDTO;
 import skillspace.skillspace_backend.shared.security.service.SecurityService;
 
@@ -23,16 +21,6 @@ public class CompanyWriteServiceImpl implements CompanyWriteService {
 
         this.companyRepository = companyRepository;
         this.securityService = securityService;
-    }
-
-    public StatusResponseDTO updateCompanyProfile(UpdateCompanyProfileDTO dto) {
-        Company company = securityService.getCurrentCompany();
-        if (dto.profileName() != null) company.setProfileName(dto.profileName());
-        if (dto.location() != null) company.setLocation(dto.location());
-        if (dto.about() != null) company.setAbout(dto.about());
-
-        companyRepository.save(company);
-        return new StatusResponseDTO(true, "Company profile updated successfully");
     }
 
     public StatusResponseDTO addRecruiter(UUID recruiterId) {

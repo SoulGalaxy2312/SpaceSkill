@@ -2,6 +2,7 @@ package skillspace.skillspace_backend.Company.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.extern.slf4j.Slf4j;
 import skillspace.skillspace_backend.BaseUser.response.BaseUserBrief;
 import skillspace.skillspace_backend.Company.response.CompanyProfileDTO;
 import skillspace.skillspace_backend.Company.service.CompanyReadService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
+@Slf4j
 public class CompanyReadController {
     private final CompanyReadService companyReadService;
 
@@ -26,6 +28,7 @@ public class CompanyReadController {
 
     @GetMapping(ApiPath.COMPANY + "/{companyId}/profile")
     public CompanyProfileDTO getCompanyProfile(@PathVariable UUID companyId) {
+        log.info("Retrieving profile of company with id: {}", companyId);
         return companyReadService.getCompanyProfile(companyId);
     }
 
