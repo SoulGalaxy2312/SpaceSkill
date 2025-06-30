@@ -92,7 +92,8 @@ public class AuthServiceImpl implements AuthService {
         log.info("User with email {} logs in successfully", user.getEmail());
         return new LoginSuccessDTO(
             jwtTokenProvider.generateToken(user.getEmail()),
-            user.getId()
+            user.getId(),
+            user.getRole()
         );
     }
 }
