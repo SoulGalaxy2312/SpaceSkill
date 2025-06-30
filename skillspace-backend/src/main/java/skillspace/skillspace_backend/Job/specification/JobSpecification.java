@@ -1,5 +1,7 @@
 package skillspace.skillspace_backend.Job.specification;
 
+import java.util.UUID;
+
 import org.springframework.data.jpa.domain.Specification;
 
 import skillspace.skillspace_backend.Job.model.Job;
@@ -14,6 +16,12 @@ public class JobSpecification {
     public static Specification<Job> fromCompany(String companyName) {
         return (root, query, criteriaBuilder) -> {
             return criteriaBuilder.equal(root.get("company").get("profileName"), companyName);
+        };
+    }
+
+    public static Specification<Job> fromCompany(UUID companyId) {
+        return (root, query, criteriaBuilder) -> {
+            return criteriaBuilder.equal(root.get("company").get("id"), companyId);
         };
     }
 

@@ -1,5 +1,6 @@
 package skillspace.skillspace_backend.Job.service;
 
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -62,5 +63,22 @@ public class JobReadServiceImpl implements JobReadService {
             return null;
         }
         return input.trim();
+    }
+
+    public PagingDTO<JobResponseDTO> getCompanyOpeningPositions(UUID companyId, int page, int size) {
+        Specification<Job> spec = Specification.where(JobSpecification.fromCompany(companyId))
+                                                .and(JobSpecification.sortByCreatedAtDesc());
+
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        Page<Job> jobs = jobRepository.findAll(spec, pageable);
+        return new PagingDTO<>(
+            jobs.getContent()
+                .stream()
+                .map(JobMapper::toJobResponseDTO)
+                .collect(Collectors.toList()),
+            jobs.getNumber(), 
+            jobs.getSize(), 
+            jobs.getTotalElements(), 
+            jobs.getTotalPages());
     }
 }
