@@ -2,12 +2,15 @@ package skillspace.skillspace_backend.auth.service;
 
 import skillspace.skillspace_backend.shared.security.UserPrincipal;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +20,14 @@ import skillspace.skillspace_backend.Company.model.Company;
 import skillspace.skillspace_backend.Company.repository.CompanyRepository;
 import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.User.repository.UserRepository;
+import skillspace.skillspace_backend.User.service.UserProfileDTOLoadAndCacheService;
 import skillspace.skillspace_backend.auth.exception.EmailAlreadyUsedException;
 import skillspace.skillspace_backend.auth.request.LoginDTO;
 import skillspace.skillspace_backend.auth.request.RegisterDTO;
 import skillspace.skillspace_backend.auth.response.LoginSuccessDTO;
 import skillspace.skillspace_backend.shared.response.StatusResponseDTO;
 import skillspace.skillspace_backend.shared.security.jwt.JwtTokenProvider;
+import skillspace.skillspace_backend.shared.security.service.SecurityService;
 
 @Service
 @Slf4j
@@ -34,6 +39,9 @@ public class AuthServiceImpl implements AuthService {
     private final BaseUserRepository baseUserRepository;
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
+    private final SecurityService securityService;
+
+    private final UserProfileDTOLoadAndCacheService userProfileDTOLoadAndCacheService;
 
     public AuthServiceImpl(
         PasswordEncoder passwordEncoder, 
@@ -41,7 +49,9 @@ public class AuthServiceImpl implements AuthService {
         AuthenticationManager authenticationManager,
         BaseUserRepository baseUserRepository,
         UserRepository userRepository,
-        CompanyRepository companyRepository) {
+        CompanyRepository companyRepository,
+        SecurityService securityService,
+        UserProfileDTOLoadAndCacheService userProfileDTOLoadAndCacheService) {
         
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
@@ -49,6 +59,8 @@ public class AuthServiceImpl implements AuthService {
         this.baseUserRepository = baseUserRepository;
         this.userRepository = userRepository;
         this.companyRepository = companyRepository;
+        this.securityService = securityService;
+        this.userProfileDTOLoadAndCacheService = userProfileDTOLoadAndCacheService;
     }
 
     @Transactional
@@ -95,5 +107,13 @@ public class AuthServiceImpl implements AuthService {
             user.getId(),
             user.getRole()
         );
+    }
+
+    public StatusResponseDTO logout() throws JsonProcessingException {
+        UUID id = securityService.getCurrentBaseUserId();
+        log.info("Attempting to logout for user with id: {}", id);
+        userProfileDTOLoadAndCacheService.flushAll(id);
+        log.info("Successfully logout for user with id: {}", id);
+        return new StatusResponseDTO(true, "Successfully logout for user with id " + id);
     }
 }

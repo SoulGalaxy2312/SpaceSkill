@@ -17,6 +17,7 @@ import skillspace.skillspace_backend.shared.cache.LoadAndCacheService;
 @Service
 public class UserProfileDTOLoadAndCacheService extends LoadAndCacheService<UserProfileDTO> {
     private static final String USER_PROFILE_CACHE_KEY_PREFIX = "skillspace:user:profile";
+
     public UserProfileDTOLoadAndCacheService(RedisTemplate<String, String> redisTemplate) {
         super(redisTemplate);
     }
@@ -39,5 +40,10 @@ public class UserProfileDTOLoadAndCacheService extends LoadAndCacheService<UserP
     public void writeHash(UUID userId, UserProfileDTO value) throws JsonProcessingException {
         final String key = String.format("%s:%s", USER_PROFILE_CACHE_KEY_PREFIX, userId.toString());
         this.writeHash(key, value, Duration.ofMinutes(2));
+    }
+
+    public void flushAll(UUID userId) throws JsonProcessingException {
+        final String key = String.format("%s:%s", USER_PROFILE_CACHE_KEY_PREFIX, userId.toString());
+        this.deleteCacheByPattern(key);
     }
 }
