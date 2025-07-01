@@ -7,6 +7,7 @@ import JobCard from "../../../components/JobCard";
 import { fetchCompanyProfile } from "../../../api/companyApi";
 import NavBar from "../../../components/NavBar"
 import { getAppItem } from "../../../utils/localStorages";
+import MyApplicationsTab from "../../../components/MyApplicationTab";
 
 export default function CompanyProfilePage() {
   const { id } = useParams();
@@ -100,30 +101,48 @@ export default function CompanyProfilePage() {
 
         {/* Tabs */}
         <div className="flex border-b border-gray-700 mb-4">
+        <button
+          onClick={() => setActiveTab("overview")}
+          className={`px-4 py-2 font-medium transition ${
+            activeTab === "overview"
+              ? "text-indigo-400 border-b-2 border-indigo-400"
+              : "text-gray-400 hover:text-white"
+          }`}
+        >
+          Overview
+        </button>
+
+        <button
+          onClick={() => setActiveTab("jobs")}
+          className={`px-4 py-2 font-medium transition ${
+            activeTab === "jobs"
+              ? "text-indigo-400 border-b-2 border-indigo-400"
+              : "text-gray-400 hover:text-white"
+          }`}
+        >
+          Open Positions
+        </button>
+
+        {company.isCurrentBaseUser && (
           <button
-            onClick={() => setActiveTab("overview")}
+            onClick={() => setActiveTab("applications")}
             className={`px-4 py-2 font-medium transition ${
-              activeTab === "overview" ? "text-indigo-400 border-b-2 border-indigo-400" : "text-gray-400 hover:text-white"
+              activeTab === "applications"
+                ? "text-indigo-400 border-b-2 border-indigo-400"
+                : "text-gray-400 hover:text-white"
             }`}
           >
-            Overview
+            My Applications
           </button>
-          
-          <button
-            onClick={() => setActiveTab("jobs")}
-            className={`px-4 py-2 font-medium transition ${
-              activeTab === "jobs" ? "text-indigo-400 border-b-2 border-indigo-400" : "text-gray-400 hover:text-white"
-            }`}
-          >
-            Open Positions
-          </button>
-        </div>
+        )}
+      </div>
+
 
         {/* Content */}
         <div className="mt-4">
           {activeTab === "overview" ? (
             <p className="text-gray-300 whitespace-pre-wrap">{company.about}</p>
-          ) : (
+          ) : activeTab === "jobs" ? (
             jobs?.content?.length > 0 ? (
               <div className="space-y-4">
                 {jobs.content.map((job) => (
@@ -133,7 +152,9 @@ export default function CompanyProfilePage() {
             ) : (
               <p className="text-gray-400">No job openings at the moment.</p>
             )
-          )}
+          ) : activeTab === "applications" ? (
+            <MyApplicationsTab companyId={company.id} />
+          ) : null}
         </div>
       </div>
 
