@@ -42,7 +42,8 @@ public class Application {
     @Column(nullable = false, updatable = false)
     private LocalDate appliedAt;
 
-    private String resumeUrl;
+    @Column(nullable = false)
+    private String personalStatement;
 
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;

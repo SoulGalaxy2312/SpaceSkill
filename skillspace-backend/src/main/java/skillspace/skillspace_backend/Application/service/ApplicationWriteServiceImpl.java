@@ -11,17 +11,15 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import skillspace.skillspace_backend.Application.exception.ApplicationNotFoundException;
-import skillspace.skillspace_backend.Application.mapper.ApplicationMapper;
 import skillspace.skillspace_backend.Application.model.Application;
 import skillspace.skillspace_backend.Application.repository.ApplicationRepository;
-import skillspace.skillspace_backend.Application.request.ApplicationRequestDTO;
 import skillspace.skillspace_backend.Application.request.ProcessApplicationRequestDTO;
-import skillspace.skillspace_backend.Application.response.ApplicationResponseDTO;
 import skillspace.skillspace_backend.Company.model.Company;
 import skillspace.skillspace_backend.Job.model.Job;
 import skillspace.skillspace_backend.Job.repository.JobRepository;
 import skillspace.skillspace_backend.User.model.User;
 import skillspace.skillspace_backend.shared.enums.ApplicationStatus;
+import skillspace.skillspace_backend.shared.response.StatusResponseDTO;
 import skillspace.skillspace_backend.shared.security.service.SecurityService;
 
 @Service
@@ -37,21 +35,23 @@ public class ApplicationWriteServiceImpl implements ApplicationWriteService {
         this.securityService = securityService;
     }
 
-    public ApplicationResponseDTO applyJob(UUID jobId, ApplicationRequestDTO request) {
+    public StatusResponseDTO applyJob(UUID jobId, String personalStatement) {
+        log.info("Attempting to apply for job with id: {}", jobId);
         Job job = jobRepository.getJobByIdOrThrow(jobId);
         User user = securityService.getCurrentUser();
         
         Application application = new Application();
         application.setJob(job);
-        application.setResumeUrl(request.resumeUrl());
+        application.setPersonalStatement(personalStatement);
         application.setUser(user);
         application.setStatus(ApplicationStatus.PENDING);
+        application.setReviewerNote(null);
         
         Application saved = applicationRepository.save(application);
-        return ApplicationMapper.toApplicationResponseDTO(saved);
+        return new StatusResponseDTO(true, "Successfully apply job with id: " + saved.getId());
     }    
 
-    public ApplicationResponseDTO processApplication(UUID applicationId, ProcessApplicationRequestDTO dto) throws ApplicationNotFoundException {
+    public StatusResponseDTO processApplication(UUID applicationId, ProcessApplicationRequestDTO dto) throws ApplicationNotFoundException {
         Application application = applicationRepository.findById(applicationId)
             .orElseThrow(() -> {
                 log.warn("Application with id {} was not found", applicationId);
@@ -79,6 +79,6 @@ public class ApplicationWriteServiceImpl implements ApplicationWriteService {
         application.setStatus(dto.status());
         application.setReviewerNote(dto.reviewerNote());
         Application saved = applicationRepository.save(application);
-        return ApplicationMapper.toApplicationResponseDTO(saved);
+        return new StatusResponseDTO(true, "Successfully process application with id: " + saved.getId());
     }
 }
