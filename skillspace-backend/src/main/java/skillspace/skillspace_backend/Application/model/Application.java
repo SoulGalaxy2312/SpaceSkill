@@ -48,6 +48,7 @@ public class Application {
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
 
+    @Column(name = "reviewer_note")
     private String reviewerNote;
     
     @PrePersist

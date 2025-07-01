@@ -74,7 +74,9 @@ public class ApplicationWriteServiceImpl implements ApplicationWriteService {
             log.warn("User with id {} is not authorized to do this action", currentActorId);
             throw new AccessDeniedException("User with id " + currentActorId + " is not authorized to do this action");
         }
-        log.debug("User is authorized");
+
+        log.info("Status: {}", dto.status());
+        log.info("Reviewer note: {}", dto.reviewerNote());
 
         application.setStatus(dto.status());
         application.setReviewerNote(dto.reviewerNote());
