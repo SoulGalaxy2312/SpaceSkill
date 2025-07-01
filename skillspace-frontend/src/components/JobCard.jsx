@@ -1,6 +1,8 @@
 import { Briefcase, MapPin, Clock, BadgeCheck } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import ApplyJobModal from "./ApplyJobModal";
+import { useState } from "react";
 
 export default function JobCard({ job }) {
   const {
@@ -15,6 +17,7 @@ export default function JobCard({ job }) {
   } = job;
 
   const navigate = useNavigate();
+  const [showApplyModal, setShowApplyModal] = useState(false);
 
   return (
     <div className="bg-gray-800 hover:bg-gray-700 transition rounded-xl p-4 shadow-md space-y-3 border border-gray-700">
@@ -70,17 +73,26 @@ export default function JobCard({ job }) {
       {/* Description */}
       <p className="text-sm text-gray-300 line-clamp-3">{description}</p>
 
-      {/* Action */}
-      <div className="pt-2">
-        <button
-          className="text-indigo-400 hover:text-indigo-300 text-sm font-medium"
-          onClick={() => {
-            // You can navigate to /jobs/${id} or open modal
-            console.log("View job details:", id);
-          }}
-        >
-          Apply →
-        </button>
+      {/* Apply */}
+      <div className="bg-gray-800 hover:bg-gray-700 transition rounded-xl p-4 shadow-md space-y-3 border border-gray-700">
+        {/* ... header, company, skills ... */}
+
+        <p className="text-sm text-gray-300 line-clamp-3">{job.description}</p>
+
+        <div className="pt-2">
+          <button
+            className="text-indigo-400 hover:text-indigo-300 text-sm font-medium"
+            onClick={() => setShowApplyModal(true)}
+          >
+            Apply →
+          </button>
+        </div>
+
+        <ApplyJobModal
+          isOpen={showApplyModal}
+          onClose={() => setShowApplyModal(false)}
+          job={job}
+        />
       </div>
     </div>
   );
