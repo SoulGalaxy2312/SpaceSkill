@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import skillspace.skillspace_backend.User.request.AddEducationDTO;
 import skillspace.skillspace_backend.User.request.AddExperienceDTO;
 import skillspace.skillspace_backend.User.request.FollowRequestDTO;
+import skillspace.skillspace_backend.User.response.ExperienceDTO;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
 import skillspace.skillspace_backend.User.service.UserWriteService;
 import skillspace.skillspace_backend.shared.constants.ApiPath;
@@ -37,9 +38,8 @@ public class UserWriteController {
      */
     @PostMapping(ApiPath.USER + "/experiences")
     @PreAuthorize("hasRole('USER')")
-    public UserProfileDTO addExperience(@RequestBody AddExperienceDTO experience) throws JsonProcessingException {
-        UserProfileDTO userProfileDTO = userWriteService.addExperience(experience);
-        return userProfileDTO;
+    public ExperienceDTO addExperience(@RequestBody AddExperienceDTO experience) throws JsonProcessingException {
+        return userWriteService.addExperience(experience);
     }
 
     @DeleteMapping(ApiPath.USER + "/experiences/{experienceId}") 
@@ -69,18 +69,16 @@ public class UserWriteController {
     /**
      * Skill section
      */
-    @PostMapping(ApiPath.USER + "/skills/{skill}")
+    @PostMapping(ApiPath.USER + "/skills")
     @PreAuthorize("hasRole('USER')")
-    public UserProfileDTO addSkill(@PathVariable String skill) throws JsonProcessingException {
-        UserProfileDTO userProfileDTO = userWriteService.addSkill(skill);
-        return userProfileDTO;
+    public String addSkill(@RequestBody String skill) throws JsonProcessingException {
+        return userWriteService.addSkill(skill);
     }
 
     @DeleteMapping(ApiPath.USER + "/skills/{skill}")
     @PreAuthorize("hasRole('USER')")
-    public UserProfileDTO deleteSkill(@PathVariable String skill) throws JsonProcessingException {
-        UserProfileDTO userProfileDTO = userWriteService.deleteSkill(skill);
-        return userProfileDTO;
+    public StatusResponseDTO deleteSkill(@PathVariable String skill) throws JsonProcessingException {
+        return userWriteService.deleteSkill(skill);
     }
 
     /**

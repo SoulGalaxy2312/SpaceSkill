@@ -8,12 +8,13 @@ import skillspace.skillspace_backend.User.exception.DuplicateSkillException;
 import skillspace.skillspace_backend.User.request.AddEducationDTO;
 import skillspace.skillspace_backend.User.request.AddExperienceDTO;
 import skillspace.skillspace_backend.User.request.FollowRequestDTO;
+import skillspace.skillspace_backend.User.response.ExperienceDTO;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
 import skillspace.skillspace_backend.shared.response.StatusResponseDTO;
 
 public interface UserWriteService {
     // Experience section
-    UserProfileDTO addExperience(AddExperienceDTO experience) throws JsonProcessingException;    
+    ExperienceDTO addExperience(AddExperienceDTO experience) throws JsonProcessingException;    
     UserProfileDTO deleteExperience(UUID experienceId) throws JsonProcessingException;
     
     // Education section
@@ -21,8 +22,8 @@ public interface UserWriteService {
     UserProfileDTO deleteEducation(UUID educationId) throws JsonProcessingException;
 
     // Skill section
-    UserProfileDTO addSkill(String skill) throws DuplicateSkillException, JsonProcessingException;
-    UserProfileDTO deleteSkill(String skill) throws JsonProcessingException;
+    String addSkill(String skill) throws DuplicateSkillException, JsonProcessingException;
+    StatusResponseDTO deleteSkill(String skill) throws JsonProcessingException;
 
     // Follow section
     StatusResponseDTO follow(FollowRequestDTO followRequestDTO);

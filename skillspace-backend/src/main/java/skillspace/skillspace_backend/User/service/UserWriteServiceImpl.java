@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import skillspace.skillspace_backend.User.exception.DuplicateSkillException;
+import skillspace.skillspace_backend.User.mapper.ExperienceMapper;
 import skillspace.skillspace_backend.User.mapper.UserMapper;
 import skillspace.skillspace_backend.User.model.Education;
 import skillspace.skillspace_backend.User.model.Experience;
@@ -17,6 +18,7 @@ import skillspace.skillspace_backend.User.repository.UserRepository;
 import skillspace.skillspace_backend.User.request.AddEducationDTO;
 import skillspace.skillspace_backend.User.request.AddExperienceDTO;
 import skillspace.skillspace_backend.User.request.FollowRequestDTO;
+import skillspace.skillspace_backend.User.response.ExperienceDTO;
 import skillspace.skillspace_backend.User.response.UserProfileDTO;
 import skillspace.skillspace_backend.User.service.following.FollowingStrategyFactory;
 import skillspace.skillspace_backend.User.service.following.IFollowingMechanism;
@@ -50,7 +52,7 @@ public class UserWriteServiceImpl implements UserWriteService {
      * Experience section
      */
     @Transactional
-    public UserProfileDTO addExperience(AddExperienceDTO dto) throws JsonProcessingException {
+    public ExperienceDTO addExperience(AddExperienceDTO dto) throws JsonProcessingException {
         User user = securityService.getCurrentUser();
         Experience entity = new Experience();
         entity.setStartDate(dto.startDate());
@@ -60,9 +62,13 @@ public class UserWriteServiceImpl implements UserWriteService {
         entity.setUser(user);
 
         user.getExperiences().add(entity);
-        UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true, false);
+        User saved = userRepository.save(user);
+
+        UserProfileDTO profile = UserMapper.toUserProfileDTO(saved, true, false);
         cacheService.writeHash(user.getId(), profile);
-        return profile;
+
+        Experience savedExperience = saved.getExperiences().get(saved.getExperiences().size() - 1);
+        return ExperienceMapper.toExperienceDTO(savedExperience);
     }
 
     @Transactional
@@ -111,7 +117,8 @@ public class UserWriteServiceImpl implements UserWriteService {
     /**
      * Skill section
      */
-    public UserProfileDTO addSkill(String skill) throws DuplicateSkillException, JsonProcessingException {
+    public String addSkill(String skill) throws DuplicateSkillException, JsonProcessingException {
+        log.info("New Skill: {}", skill);
         User user = securityService.getCurrentUser();
         List<String> skills = user.getSkills();
         if (skills.contains(skill)) {
@@ -121,15 +128,15 @@ public class UserWriteServiceImpl implements UserWriteService {
         skills.add(skill);
         UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true, false);
         cacheService.writeHash(user.getId(), profile);
-        return profile;
+        return skill;
     }
 
-    public UserProfileDTO deleteSkill(String skill) throws JsonProcessingException {
+    public StatusResponseDTO deleteSkill(String skill) throws JsonProcessingException {
         User user = securityService.getCurrentUser();
         user.getSkills().remove(skill);
         UserProfileDTO profile = UserMapper.toUserProfileDTO(userRepository.save(user), true, false);
         cacheService.writeHash(user.getId(), profile);
-        return profile;
+        return new StatusResponseDTO(true, "Remove skill successfully");
     }
     
     /**
