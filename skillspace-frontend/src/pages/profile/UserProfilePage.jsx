@@ -7,6 +7,7 @@ import EditProfileModal from "../../components/EditProfileModal"
 import NavBar from "../../components/NavBar"
 import { getAppItem } from "../../utils/localStorages";
 import SimpleListModal from "../../components/SimpleListModal";
+import { Trash2 } from "lucide-react";
 
 export default function UserProfilePage() {
   const { id } = useParams();
@@ -16,6 +17,61 @@ export default function UserProfilePage() {
   const [showFollowingCompanies, setShowFollowingCompanies] = useState(false);
   const [connections, setConnections] = useState([]);
   const [followingCompanies, setFollowingCompanies] = useState([]);
+  const [showAddSkillModal, setShowAddSkillModal] = useState(false);
+  const [newSkill, setNewSkill] = useState("");
+  const [skillError, setSkillError] = useState(null);
+
+  const handleDeleteSkill = async (skill) => {
+    if (!window.confirm(`Are you sure you want to delete "${skill}"?`)) return;
+
+    try {
+      await axiosInstance.delete(`/users/skills/${skill}`, {
+        headers: { Authorization: `Bearer ${getAppItem("jwt")}` },
+      });
+
+      setProfile((prevProfile) => ({
+        ...prevProfile,
+        skills: prevProfile.skills.filter((s) => s !== skill),
+      }));
+    } catch (err) {
+      console.error("Failed to delete skill", err);
+      alert("Failed to delete skill. Please try again.");
+    }
+  };
+
+
+  const handleAddSkill = async () => {
+    if (!newSkill.trim()) {
+      setSkillError("Skill cannot be empty");
+      return;
+    }
+
+    try {
+      const res = await axiosInstance.post(
+          "users/skills",
+          newSkill,
+          {
+            headers: {
+              Authorization: `Bearer ${getAppItem("jwt")}`,
+              "Content-Type": "text/plain",
+            },
+            transformRequest: [(data) => data],
+          }
+        );
+
+      console.log(res);
+      setProfile((prevProfile) => ({
+        ...prevProfile,
+        skills: [...prevProfile.skills, res.data],
+      }));
+      setNewSkill("");
+      setSkillError(null);
+      setShowAddSkillModal(false);
+    } catch (err) {
+      console.error("Failed to add skill", err);
+      setSkillError("Failed to add skill. Try again.");
+    }
+  };
 
   const fetchUserProfile = async () => {
     try {
@@ -127,11 +183,33 @@ export default function UserProfilePage() {
             <h3 className="text-xl text-indigo-400 font-semibold mb-2">About</h3>
             <p className="text-gray-300 whitespace-pre-wrap mb-6">{baseUserProfileInformation.about}</p>
 
-            <h3 className="text-xl text-indigo-400 font-semibold mb-2">Skills</h3>
+            <h3 className="text-xl text-indigo-400 font-semibold mb-2 flex justify-between items-center">
+              Skills
+              {baseUserProfileInformation.isCurrentBaseUser && (
+                <button
+                  onClick={() => setShowAddSkillModal(true)}
+                  className="text-sm text-indigo-300 hover:underline"
+                >
+                  + Add
+                </button>
+              )}
+            </h3>
+
             <div className="flex flex-wrap gap-2 mb-6">
               {skills.map((skill, index) => (
-                <span key={index} className="bg-indigo-600 text-sm px-3 py-1 rounded-full">
+                <span
+                  key={index}
+                  className="bg-indigo-600 text-sm px-3 py-1 rounded-full flex items-center gap-2"
+                >
                   {skill}
+                  {baseUserProfileInformation.isCurrentBaseUser && (
+                    <button
+                      onClick={() => handleDeleteSkill(skill)}
+                      className="text-gray-200 hover:text-red-400"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  )}
                 </span>
               ))}
             </div>
@@ -189,6 +267,41 @@ export default function UserProfilePage() {
           title="Following Companies"
           items={followingCompanies}
         />
+
+        {showAddSkillModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white text-gray-800 p-6 rounded-lg shadow-lg w-full max-w-sm">
+            <h3 className="text-lg font-semibold mb-4">Add Skill</h3>
+            <input
+              type="text"
+              value={newSkill}
+              onChange={(e) => setNewSkill(e.target.value)}
+              className="w-full border border-gray-300 rounded px-3 py-2 mb-2"
+              placeholder="e.g. ReactJS"
+            />
+            {skillError && <p className="text-sm text-red-500 mb-2">{skillError}</p>}
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => {
+                  setShowAddSkillModal(false);
+                  setNewSkill("");
+                  setSkillError(null);
+                }}
+                className="px-4 py-2 text-sm bg-gray-300 rounded hover:bg-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddSkill}
+                className="px-4 py-2 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       </div>
     </>
   );
